@@ -1,0 +1,13 @@
+git+https://github.com/gitpython-developers/GitPython.git
+networkx==3.1
+pyvis==0.3.2
+transformers==4.30.2
+torch==2.0.1
+pygithub==1.59.0
+tqdm==4.65.0
+beautifulsoup4==4.12.2
+esprima==4.0.1
+astroid==2.15.6
+numpy>=2.0
+matplotlib>=3.8.0  # Latest version with NumPy 2.x support
+pybind11>=2.12

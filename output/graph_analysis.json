@@ -1,0 +1,84 @@
+{
+  "stats": {
+    "total_nodes": 100,
+    "total_edges": 153,
+    "python_files": 0,
+    "js_files": 62,
+    "python_packages": 0,
+    "js_packages": 36
+  },
+  "central_nodes": {
+    "degree": [
+      [
+        "js_pkg:react",
+        0.36363636363636365
+      ],
+      [
+        "js_pkg:@/components",
+        0.15151515151515152
+      ],
+      [
+        "js_pkg:@/lib",
+        0.14141414141414144
+      ],
+      [
+        "js_pkg:lucide-react",
+        0.12121212121212122
+      ],
+      [
+        "js_pkg:axios",
+        0.12121212121212122
+      ]
+    ],
+    "betweenness": [
+      [
+        "Backend\\server.js",
+        0.0
+      ],
+      [
+        "js_pkg:cors",
+        0.0
+      ],
+      [
+        "js_pkg:mongoose",
+        0.0
+      ],
+      [
+        "js_pkg:express",
+        0.0
+      ],
+      [
+        "Backend\\controllers\\addChatMessage.js",
+        0.0
+      ]
+    ],
+    "pagerank": [
+      [
+        "js_pkg:react",
+        0.08077314451736323
+      ],
+      [
+        "js_pkg:mongoose",
+        0.06407261225054965
+      ],
+      [
+        "js_pkg:@/lib",
+        0.03317662755694459
+      ],
+      [
+        "js_pkg:react-router-dom",
+        0.028815933020609946
+      ],
+      [
+        "js_pkg:@/components",
+        0.028352029346531787
+      ]
+    ]
+  },
+  "clusters": 0,
+  "density": 0.015454545454545455,
+  "avg_clustering": 0.0,
+  "recommendations": [
+    "Low clustering coefficient suggests poor code organization. Consider grouping related functionality."
+  ]
+}

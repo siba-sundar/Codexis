@@ -1,0 +1,1378 @@
+{
+  "repo_name": "Student-Mentorship-Platform",
+  "metadata": {
+    "python_files": 0,
+    "js_files": 62,
+    "python_packages": 0,
+    "js_packages": 36
+  },
+  "nodes": [
+    {
+      "id": "Backend\\server.js",
+      "type": "js_file",
+      "label": "Backend\\server.js",
+      "title": "JavaScript: Backend\\server.js"
+    },
+    {
+      "id": "js_pkg:cors",
+      "type": "js_package",
+      "label": "cors",
+      "title": "JS Package: cors (unknown)"
+    },
+    {
+      "id": "js_pkg:mongoose",
+      "type": "js_package",
+      "label": "mongoose",
+      "title": "JS Package: mongoose (unknown)"
+    },
+    {
+      "id": "js_pkg:express",
+      "type": "js_package",
+      "label": "express",
+      "title": "JS Package: express (unknown)"
+    },
+    {
+      "id": "Backend\\controllers\\addChatMessage.js",
+      "type": "js_file",
+      "label": "Backend\\controllers\\addChatMessage.js",
+      "title": "JavaScript: Backend\\controllers\\addChatMessage.js"
+    },
+    {
+      "id": "Backend\\controllers\\addStudent.js",
+      "type": "js_file",
+      "label": "Backend\\controllers\\addStudent.js",
+      "title": "JavaScript: Backend\\controllers\\addStudent.js"
+    },
+    {
+      "id": "Backend\\controllers\\assignMentor.js",
+      "type": "js_file",
+      "label": "Backend\\controllers\\assignMentor.js",
+      "title": "JavaScript: Backend\\controllers\\assignMentor.js"
+    },
+    {
+      "id": "Backend\\controllers\\authController.js",
+      "type": "js_file",
+      "label": "Backend\\controllers\\authController.js",
+      "title": "JavaScript: Backend\\controllers\\authController.js"
+    },
+    {
+      "id": "js_pkg:jsonwebtoken",
+      "type": "js_package",
+      "label": "jsonwebtoken",
+      "title": "JS Package: jsonwebtoken (unknown)"
+    },
+    {
+      "id": "js_pkg:bcryptjs",
+      "type": "js_package",
+      "label": "bcryptjs",
+      "title": "JS Package: bcryptjs (unknown)"
+    },
+    {
+      "id": "js_pkg:dotenv",
+      "type": "js_package",
+      "label": "dotenv",
+      "title": "JS Package: dotenv (unknown)"
+    },
+    {
+      "id": "Backend\\controllers\\fetchChat.js",
+      "type": "js_file",
+      "label": "Backend\\controllers\\fetchChat.js",
+      "title": "JavaScript: Backend\\controllers\\fetchChat.js"
+    },
+    {
+      "id": "Backend\\controllers\\getStudentList.js",
+      "type": "js_file",
+      "label": "Backend\\controllers\\getStudentList.js",
+      "title": "JavaScript: Backend\\controllers\\getStudentList.js"
+    },
+    {
+      "id": "Backend\\controllers\\removeStudent.js",
+      "type": "js_file",
+      "label": "Backend\\controllers\\removeStudent.js",
+      "title": "JavaScript: Backend\\controllers\\removeStudent.js"
+    },
+    {
+      "id": "Backend\\controllers\\uploadFile.js",
+      "type": "js_file",
+      "label": "Backend\\controllers\\uploadFile.js",
+      "title": "JavaScript: Backend\\controllers\\uploadFile.js"
+    },
+    {
+      "id": "js_pkg:multer",
+      "type": "js_package",
+      "label": "multer",
+      "title": "JS Package: multer (unknown)"
+    },
+    {
+      "id": "Backend\\controllers\\userInfo.js",
+      "type": "js_file",
+      "label": "Backend\\controllers\\userInfo.js",
+      "title": "JavaScript: Backend\\controllers\\userInfo.js"
+    },
+    {
+      "id": "Backend\\database\\connect.js",
+      "type": "js_file",
+      "label": "Backend\\database\\connect.js",
+      "title": "JavaScript: Backend\\database\\connect.js"
+    },
+    {
+      "id": "Backend\\database\\Schema\\Mentor.js",
+      "type": "js_file",
+      "label": "Backend\\database\\Schema\\Mentor.js",
+      "title": "JavaScript: Backend\\database\\Schema\\Mentor.js"
+    },
+    {
+      "id": "Backend\\database\\Schema\\User.js",
+      "type": "js_file",
+      "label": "Backend\\database\\Schema\\User.js",
+      "title": "JavaScript: Backend\\database\\Schema\\User.js"
+    },
+    {
+      "id": "Backend\\middleware\\authMiddleware.js",
+      "type": "js_file",
+      "label": "Backend\\middleware\\authMiddleware.js",
+      "title": "JavaScript: Backend\\middleware\\authMiddleware.js"
+    },
+    {
+      "id": "Backend\\middleware\\multer.js",
+      "type": "js_file",
+      "label": "Backend\\middleware\\multer.js",
+      "title": "JavaScript: Backend\\middleware\\multer.js"
+    },
+    {
+      "id": "Backend\\routes\\admin.js",
+      "type": "js_file",
+      "label": "Backend\\routes\\admin.js",
+      "title": "JavaScript: Backend\\routes\\admin.js"
+    },
+    {
+      "id": "Backend\\routes\\auth.js",
+      "type": "js_file",
+      "label": "Backend\\routes\\auth.js",
+      "title": "JavaScript: Backend\\routes\\auth.js"
+    },
+    {
+      "id": "Backend\\routes\\mentor.js",
+      "type": "js_file",
+      "label": "Backend\\routes\\mentor.js",
+      "title": "JavaScript: Backend\\routes\\mentor.js"
+    },
+    {
+      "id": "Backend\\routes\\student.js",
+      "type": "js_file",
+      "label": "Backend\\routes\\student.js",
+      "title": "JavaScript: Backend\\routes\\student.js"
+    },
+    {
+      "id": "Frontend\\eslint.config.js",
+      "type": "js_file",
+      "label": "Frontend\\eslint.config.js",
+      "title": "JavaScript: Frontend\\eslint.config.js"
+    },
+    {
+      "id": "js_pkg:@eslint/js",
+      "type": "js_package",
+      "label": "@eslint/js",
+      "title": "JS Package: @eslint/js (^9.21.0)"
+    },
+    {
+      "id": "js_pkg:globals",
+      "type": "js_package",
+      "label": "globals",
+      "title": "JS Package: globals (^15.15.0)"
+    },
+    {
+      "id": "js_pkg:eslint-plugin-react-hooks",
+      "type": "js_package",
+      "label": "eslint-plugin-react-hooks",
+      "title": "JS Package: eslint-plugin-react-hooks (^5.1.0)"
+    },
+    {
+      "id": "js_pkg:eslint-plugin-react-refresh",
+      "type": "js_package",
+      "label": "eslint-plugin-react-refresh",
+      "title": "JS Package: eslint-plugin-react-refresh (^0.4.19)"
+    },
+    {
+      "id": "Frontend\\tailwind.config.js",
+      "type": "js_file",
+      "label": "Frontend\\tailwind.config.js",
+      "title": "JavaScript: Frontend\\tailwind.config.js"
+    },
+    {
+      "id": "js_pkg:tailwindcss-animate",
+      "type": "js_package",
+      "label": "tailwindcss-animate",
+      "title": "JS Package: tailwindcss-animate (^1.0.7)"
+    },
+    {
+      "id": "Frontend\\vite.config.js",
+      "type": "js_file",
+      "label": "Frontend\\vite.config.js",
+      "title": "JavaScript: Frontend\\vite.config.js"
+    },
+    {
+      "id": "js_pkg:vite",
+      "type": "js_package",
+      "label": "vite",
+      "title": "JS Package: vite (^6.2.0)"
+    },
+    {
+      "id": "js_pkg:path",
+      "type": "js_package",
+      "label": "path",
+      "title": "JS Package: path (unknown)"
+    },
+    {
+      "id": "js_pkg:@vitejs/plugin-react",
+      "type": "js_package",
+      "label": "@vitejs/plugin-react",
+      "title": "JS Package: @vitejs/plugin-react (^4.3.4)"
+    },
+    {
+      "id": "Frontend\\src\\App.jsx",
+      "type": "js_file",
+      "label": "Frontend\\src\\App.jsx",
+      "title": "JavaScript: Frontend\\src\\App.jsx"
+    },
+    {
+      "id": "js_pkg:react-router-dom",
+      "type": "js_package",
+      "label": "react-router-dom",
+      "title": "JS Package: react-router-dom (^7.4.0)"
+    },
+    {
+      "id": "Frontend\\src\\main.jsx",
+      "type": "js_file",
+      "label": "Frontend\\src\\main.jsx",
+      "title": "JavaScript: Frontend\\src\\main.jsx"
+    },
+    {
+      "id": "js_pkg:react",
+      "type": "js_package",
+      "label": "react",
+      "title": "JS Package: react (^19.0.0)"
+    },
+    {
+      "id": "js_pkg:react-dom",
+      "type": "js_package",
+      "label": "react-dom",
+      "title": "JS Package: react-dom (^19.0.0)"
+    },
+    {
+      "id": "Frontend\\src\\PrivateRoute.jsx",
+      "type": "js_file",
+      "label": "Frontend\\src\\PrivateRoute.jsx",
+      "title": "JavaScript: Frontend\\src\\PrivateRoute.jsx"
+    },
+    {
+      "id": "Frontend\\src\\Component\\AdminDashboard.jsx",
+      "type": "js_file",
+      "label": "Frontend\\src\\Component\\AdminDashboard.jsx",
+      "title": "JavaScript: Frontend\\src\\Component\\AdminDashboard.jsx"
+    },
+    {
+      "id": "js_pkg:@/components",
+      "type": "js_package",
+      "label": "@/components",
+      "title": "JS Package: @/components (unknown)"
+    },
+    {
+      "id": "Frontend\\src\\Component\\LandingPage.jsx",
+      "type": "js_file",
+      "label": "Frontend\\src\\Component\\LandingPage.jsx",
+      "title": "JavaScript: Frontend\\src\\Component\\LandingPage.jsx"
+    },
+    {
+      "id": "Frontend\\src\\Component\\LoginPage.jsx",
+      "type": "js_file",
+      "label": "Frontend\\src\\Component\\LoginPage.jsx",
+      "title": "JavaScript: Frontend\\src\\Component\\LoginPage.jsx"
+    },
+    {
+      "id": "js_pkg:lucide-react",
+      "type": "js_package",
+      "label": "lucide-react",
+      "title": "JS Package: lucide-react (^0.483.0)"
+    },
+    {
+      "id": "js_pkg:sweetalert2",
+      "type": "js_package",
+      "label": "sweetalert2",
+      "title": "JS Package: sweetalert2 (^11.17.2)"
+    },
+    {
+      "id": "Frontend\\src\\Component\\MentorDashboard.jsx",
+      "type": "js_file",
+      "label": "Frontend\\src\\Component\\MentorDashboard.jsx",
+      "title": "JavaScript: Frontend\\src\\Component\\MentorDashboard.jsx"
+    },
+    {
+      "id": "Frontend\\src\\Component\\StudentDashboard.jsx",
+      "type": "js_file",
+      "label": "Frontend\\src\\Component\\StudentDashboard.jsx",
+      "title": "JavaScript: Frontend\\src\\Component\\StudentDashboard.jsx"
+    },
+    {
+      "id": "Frontend\\src\\Component\\Admin\\Analytics.jsx",
+      "type": "js_file",
+      "label": "Frontend\\src\\Component\\Admin\\Analytics.jsx",
+      "title": "JavaScript: Frontend\\src\\Component\\Admin\\Analytics.jsx"
+    },
+    {
+      "id": "Frontend\\src\\Component\\Admin\\AssignMentor.jsx",
+      "type": "js_file",
+      "label": "Frontend\\src\\Component\\Admin\\AssignMentor.jsx",
+      "title": "JavaScript: Frontend\\src\\Component\\Admin\\AssignMentor.jsx"
+    },
+    {
+      "id": "js_pkg:react-toastify",
+      "type": "js_package",
+      "label": "react-toastify",
+      "title": "JS Package: react-toastify (^11.0.5)"
+    },
+    {
+      "id": "js_pkg:axios",
+      "type": "js_package",
+      "label": "axios",
+      "title": "JS Package: axios (^1.8.4)"
+    },
+    {
+      "id": "Frontend\\src\\Component\\Admin\\Mentors.jsx",
+      "type": "js_file",
+      "label": "Frontend\\src\\Component\\Admin\\Mentors.jsx",
+      "title": "JavaScript: Frontend\\src\\Component\\Admin\\Mentors.jsx"
+    },
+    {
+      "id": "Frontend\\src\\Component\\Admin\\Students.jsx",
+      "type": "js_file",
+      "label": "Frontend\\src\\Component\\Admin\\Students.jsx",
+      "title": "JavaScript: Frontend\\src\\Component\\Admin\\Students.jsx"
+    },
+    {
+      "id": "Frontend\\src\\Component\\Mentor\\AddStudent.jsx",
+      "type": "js_file",
+      "label": "Frontend\\src\\Component\\Mentor\\AddStudent.jsx",
+      "title": "JavaScript: Frontend\\src\\Component\\Mentor\\AddStudent.jsx"
+    },
+    {
+      "id": "Frontend\\src\\Component\\Mentor\\Announcement.jsx",
+      "type": "js_file",
+      "label": "Frontend\\src\\Component\\Mentor\\Announcement.jsx",
+      "title": "JavaScript: Frontend\\src\\Component\\Mentor\\Announcement.jsx"
+    },
+    {
+      "id": "Frontend\\src\\Component\\Mentor\\CreateMeeting.jsx",
+      "type": "js_file",
+      "label": "Frontend\\src\\Component\\Mentor\\CreateMeeting.jsx",
+      "title": "JavaScript: Frontend\\src\\Component\\Mentor\\CreateMeeting.jsx"
+    },
+    {
+      "id": "Frontend\\src\\Component\\Mentor\\Material.jsx",
+      "type": "js_file",
+      "label": "Frontend\\src\\Component\\Mentor\\Material.jsx",
+      "title": "JavaScript: Frontend\\src\\Component\\Mentor\\Material.jsx"
+    },
+    {
+      "id": "Frontend\\src\\Component\\Mentor\\PrivateChat.jsx",
+      "type": "js_file",
+      "label": "Frontend\\src\\Component\\Mentor\\PrivateChat.jsx",
+      "title": "JavaScript: Frontend\\src\\Component\\Mentor\\PrivateChat.jsx"
+    },
+    {
+      "id": "Frontend\\src\\Component\\Mentor\\RemoveStudent.jsx",
+      "type": "js_file",
+      "label": "Frontend\\src\\Component\\Mentor\\RemoveStudent.jsx",
+      "title": "JavaScript: Frontend\\src\\Component\\Mentor\\RemoveStudent.jsx"
+    },
+    {
+      "id": "Frontend\\src\\Component\\Mentor\\StudentList.jsx",
+      "type": "js_file",
+      "label": "Frontend\\src\\Component\\Mentor\\StudentList.jsx",
+      "title": "JavaScript: Frontend\\src\\Component\\Mentor\\StudentList.jsx"
+    },
+    {
+      "id": "Frontend\\src\\Component\\Student\\MentorInfo.jsx",
+      "type": "js_file",
+      "label": "Frontend\\src\\Component\\Student\\MentorInfo.jsx",
+      "title": "JavaScript: Frontend\\src\\Component\\Student\\MentorInfo.jsx"
+    },
+    {
+      "id": "js_pkg:react-icons",
+      "type": "js_package",
+      "label": "react-icons",
+      "title": "JS Package: react-icons (^5.5.0)"
+    },
+    {
+      "id": "Frontend\\src\\Component\\Student\\PrivateChat.jsx",
+      "type": "js_file",
+      "label": "Frontend\\src\\Component\\Student\\PrivateChat.jsx",
+      "title": "JavaScript: Frontend\\src\\Component\\Student\\PrivateChat.jsx"
+    },
+    {
+      "id": "Frontend\\src\\Component\\Student\\Schedule.jsx",
+      "type": "js_file",
+      "label": "Frontend\\src\\Component\\Student\\Schedule.jsx",
+      "title": "JavaScript: Frontend\\src\\Component\\Student\\Schedule.jsx"
+    },
+    {
+      "id": "Frontend\\src\\Component\\Student\\StudentAnnouncement.jsx",
+      "type": "js_file",
+      "label": "Frontend\\src\\Component\\Student\\StudentAnnouncement.jsx",
+      "title": "JavaScript: Frontend\\src\\Component\\Student\\StudentAnnouncement.jsx"
+    },
+    {
+      "id": "Frontend\\src\\Component\\Student\\StudyMaterial.jsx",
+      "type": "js_file",
+      "label": "Frontend\\src\\Component\\Student\\StudyMaterial.jsx",
+      "title": "JavaScript: Frontend\\src\\Component\\Student\\StudyMaterial.jsx"
+    },
+    {
+      "id": "Frontend\\src\\Component\\Student\\UserInfo.jsx",
+      "type": "js_file",
+      "label": "Frontend\\src\\Component\\Student\\UserInfo.jsx",
+      "title": "JavaScript: Frontend\\src\\Component\\Student\\UserInfo.jsx"
+    },
+    {
+      "id": "Frontend\\src\\components\\ui\\avatar.jsx",
+      "type": "js_file",
+      "label": "Frontend\\src\\components\\ui\\avatar.jsx",
+      "title": "JavaScript: Frontend\\src\\components\\ui\\avatar.jsx"
+    },
+    {
+      "id": "js_pkg:@radix-ui/react-avatar",
+      "type": "js_package",
+      "label": "@radix-ui/react-avatar",
+      "title": "JS Package: @radix-ui/react-avatar (^1.1.3)"
+    },
+    {
+      "id": "js_pkg:@/lib",
+      "type": "js_package",
+      "label": "@/lib",
+      "title": "JS Package: @/lib (unknown)"
+    },
+    {
+      "id": "Frontend\\src\\components\\ui\\badge.jsx",
+      "type": "js_file",
+      "label": "Frontend\\src\\components\\ui\\badge.jsx",
+      "title": "JavaScript: Frontend\\src\\components\\ui\\badge.jsx"
+    },
+    {
+      "id": "js_pkg:class-variance-authority",
+      "type": "js_package",
+      "label": "class-variance-authority",
+      "title": "JS Package: class-variance-authority (^0.7.1)"
+    },
+    {
+      "id": "Frontend\\src\\components\\ui\\button.jsx",
+      "type": "js_file",
+      "label": "Frontend\\src\\components\\ui\\button.jsx",
+      "title": "JavaScript: Frontend\\src\\components\\ui\\button.jsx"
+    },
+    {
+      "id": "js_pkg:@radix-ui/react-slot",
+      "type": "js_package",
+      "label": "@radix-ui/react-slot",
+      "title": "JS Package: @radix-ui/react-slot (^1.1.2)"
+    },
+    {
+      "id": "Frontend\\src\\components\\ui\\card.jsx",
+      "type": "js_file",
+      "label": "Frontend\\src\\components\\ui\\card.jsx",
+      "title": "JavaScript: Frontend\\src\\components\\ui\\card.jsx"
+    },
+    {
+      "id": "Frontend\\src\\components\\ui\\command.jsx",
+      "type": "js_file",
+      "label": "Frontend\\src\\components\\ui\\command.jsx",
+      "title": "JavaScript: Frontend\\src\\components\\ui\\command.jsx"
+    },
+    {
+      "id": "js_pkg:cmdk",
+      "type": "js_package",
+      "label": "cmdk",
+      "title": "JS Package: cmdk (^1.0.0)"
+    },
+    {
+      "id": "Frontend\\src\\components\\ui\\dialog.jsx",
+      "type": "js_file",
+      "label": "Frontend\\src\\components\\ui\\dialog.jsx",
+      "title": "JavaScript: Frontend\\src\\components\\ui\\dialog.jsx"
+    },
+    {
+      "id": "js_pkg:@radix-ui/react-dialog",
+      "type": "js_package",
+      "label": "@radix-ui/react-dialog",
+      "title": "JS Package: @radix-ui/react-dialog (^1.1.6)"
+    },
+    {
+      "id": "Frontend\\src\\components\\ui\\input.jsx",
+      "type": "js_file",
+      "label": "Frontend\\src\\components\\ui\\input.jsx",
+      "title": "JavaScript: Frontend\\src\\components\\ui\\input.jsx"
+    },
+    {
+      "id": "Frontend\\src\\components\\ui\\popover.jsx",
+      "type": "js_file",
+      "label": "Frontend\\src\\components\\ui\\popover.jsx",
+      "title": "JavaScript: Frontend\\src\\components\\ui\\popover.jsx"
+    },
+    {
+      "id": "js_pkg:@radix-ui/react-popover",
+      "type": "js_package",
+      "label": "@radix-ui/react-popover",
+      "title": "JS Package: @radix-ui/react-popover (^1.1.6)"
+    },
+    {
+      "id": "Frontend\\src\\components\\ui\\progress.jsx",
+      "type": "js_file",
+      "label": "Frontend\\src\\components\\ui\\progress.jsx",
+      "title": "JavaScript: Frontend\\src\\components\\ui\\progress.jsx"
+    },
+    {
+      "id": "js_pkg:@radix-ui/react-progress",
+      "type": "js_package",
+      "label": "@radix-ui/react-progress",
+      "title": "JS Package: @radix-ui/react-progress (^1.1.2)"
+    },
+    {
+      "id": "Frontend\\src\\components\\ui\\scroll-area.jsx",
+      "type": "js_file",
+      "label": "Frontend\\src\\components\\ui\\scroll-area.jsx",
+      "title": "JavaScript: Frontend\\src\\components\\ui\\scroll-area.jsx"
+    },
+    {
+      "id": "js_pkg:@radix-ui/react-scroll-area",
+      "type": "js_package",
+      "label": "@radix-ui/react-scroll-area",
+      "title": "JS Package: @radix-ui/react-scroll-area (^1.2.3)"
+    },
+    {
+      "id": "Frontend\\src\\components\\ui\\select.jsx",
+      "type": "js_file",
+      "label": "Frontend\\src\\components\\ui\\select.jsx",
+      "title": "JavaScript: Frontend\\src\\components\\ui\\select.jsx"
+    },
+    {
+      "id": "js_pkg:@radix-ui/react-select",
+      "type": "js_package",
+      "label": "@radix-ui/react-select",
+      "title": "JS Package: @radix-ui/react-select (^2.1.6)"
+    },
+    {
+      "id": "Frontend\\src\\components\\ui\\separator.jsx",
+      "type": "js_file",
+      "label": "Frontend\\src\\components\\ui\\separator.jsx",
+      "title": "JavaScript: Frontend\\src\\components\\ui\\separator.jsx"
+    },
+    {
+      "id": "js_pkg:@radix-ui/react-separator",
+      "type": "js_package",
+      "label": "@radix-ui/react-separator",
+      "title": "JS Package: @radix-ui/react-separator (^1.1.2)"
+    },
+    {
+      "id": "Frontend\\src\\components\\ui\\table.jsx",
+      "type": "js_file",
+      "label": "Frontend\\src\\components\\ui\\table.jsx",
+      "title": "JavaScript: Frontend\\src\\components\\ui\\table.jsx"
+    },
+    {
+      "id": "Frontend\\src\\components\\ui\\tabs.jsx",
+      "type": "js_file",
+      "label": "Frontend\\src\\components\\ui\\tabs.jsx",
+      "title": "JavaScript: Frontend\\src\\components\\ui\\tabs.jsx"
+    },
+    {
+      "id": "js_pkg:@radix-ui/react-tabs",
+      "type": "js_package",
+      "label": "@radix-ui/react-tabs",
+      "title": "JS Package: @radix-ui/react-tabs (^1.1.3)"
+    },
+    {
+      "id": "Frontend\\src\\lib\\utils.js",
+      "type": "js_file",
+      "label": "Frontend\\src\\lib\\utils.js",
+      "title": "JavaScript: Frontend\\src\\lib\\utils.js"
+    },
+    {
+      "id": "js_pkg:clsx",
+      "type": "js_package",
+      "label": "clsx",
+      "title": "JS Package: clsx (^2.1.1)"
+    },
+    {
+      "id": "js_pkg:tailwind-merge",
+      "type": "js_package",
+      "label": "tailwind-merge",
+      "title": "JS Package: tailwind-merge (^3.0.2)"
+    }
+  ],
+  "edges": [
+    {
+      "source": "Backend\\server.js",
+      "target": "js_pkg:cors",
+      "type": "external_import"
+    },
+    {
+      "source": "Backend\\server.js",
+      "target": "js_pkg:mongoose",
+      "type": "external_import"
+    },
+    {
+      "source": "Backend\\server.js",
+      "target": "js_pkg:express",
+      "type": "external_import"
+    },
+    {
+      "source": "Backend\\controllers\\addChatMessage.js",
+      "target": "js_pkg:mongoose",
+      "type": "external_import"
+    },
+    {
+      "source": "Backend\\controllers\\addStudent.js",
+      "target": "js_pkg:mongoose",
+      "type": "external_import"
+    },
+    {
+      "source": "Backend\\controllers\\assignMentor.js",
+      "target": "js_pkg:mongoose",
+      "type": "external_import"
+    },
+    {
+      "source": "Backend\\controllers\\authController.js",
+      "target": "js_pkg:jsonwebtoken",
+      "type": "external_import"
+    },
+    {
+      "source": "Backend\\controllers\\authController.js",
+      "target": "js_pkg:bcryptjs",
+      "type": "external_import"
+    },
+    {
+      "source": "Backend\\controllers\\authController.js",
+      "target": "js_pkg:dotenv",
+      "type": "external_import"
+    },
+    {
+      "source": "Backend\\controllers\\fetchChat.js",
+      "target": "js_pkg:mongoose",
+      "type": "external_import"
+    },
+    {
+      "source": "Backend\\controllers\\getStudentList.js",
+      "target": "js_pkg:mongoose",
+      "type": "external_import"
+    },
+    {
+      "source": "Backend\\controllers\\removeStudent.js",
+      "target": "js_pkg:mongoose",
+      "type": "external_import"
+    },
+    {
+      "source": "Backend\\controllers\\uploadFile.js",
+      "target": "js_pkg:multer",
+      "type": "external_import"
+    },
+    {
+      "source": "Backend\\controllers\\userInfo.js",
+      "target": "js_pkg:mongoose",
+      "type": "external_import"
+    },
+    {
+      "source": "Backend\\database\\connect.js",
+      "target": "js_pkg:mongoose",
+      "type": "external_import"
+    },
+    {
+      "source": "Backend\\database\\Schema\\Mentor.js",
+      "target": "js_pkg:mongoose",
+      "type": "external_import"
+    },
+    {
+      "source": "Backend\\database\\Schema\\User.js",
+      "target": "js_pkg:mongoose",
+      "type": "external_import"
+    },
+    {
+      "source": "Backend\\middleware\\authMiddleware.js",
+      "target": "js_pkg:jsonwebtoken",
+      "type": "external_import"
+    },
+    {
+      "source": "Backend\\middleware\\multer.js",
+      "target": "js_pkg:multer",
+      "type": "external_import"
+    },
+    {
+      "source": "Backend\\routes\\admin.js",
+      "target": "js_pkg:express",
+      "type": "external_import"
+    },
+    {
+      "source": "Backend\\routes\\auth.js",
+      "target": "js_pkg:express",
+      "type": "external_import"
+    },
+    {
+      "source": "Backend\\routes\\mentor.js",
+      "target": "js_pkg:multer",
+      "type": "external_import"
+    },
+    {
+      "source": "Backend\\routes\\mentor.js",
+      "target": "js_pkg:express",
+      "type": "external_import"
+    },
+    {
+      "source": "Backend\\routes\\student.js",
+      "target": "js_pkg:express",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\eslint.config.js",
+      "target": "js_pkg:@eslint/js",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\eslint.config.js",
+      "target": "js_pkg:globals",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\eslint.config.js",
+      "target": "js_pkg:eslint-plugin-react-hooks",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\eslint.config.js",
+      "target": "js_pkg:eslint-plugin-react-refresh",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\tailwind.config.js",
+      "target": "js_pkg:tailwindcss-animate",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\vite.config.js",
+      "target": "js_pkg:vite",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\vite.config.js",
+      "target": "js_pkg:path",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\vite.config.js",
+      "target": "js_pkg:@vitejs/plugin-react",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\App.jsx",
+      "target": "js_pkg:react-router-dom",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\main.jsx",
+      "target": "js_pkg:react",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\main.jsx",
+      "target": "js_pkg:react-dom",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\PrivateRoute.jsx",
+      "target": "js_pkg:react-router-dom",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\AdminDashboard.jsx",
+      "target": "js_pkg:react-router-dom",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\AdminDashboard.jsx",
+      "target": "js_pkg:react",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\AdminDashboard.jsx",
+      "target": "js_pkg:@/components",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\LandingPage.jsx",
+      "target": "js_pkg:react-router-dom",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\LoginPage.jsx",
+      "target": "js_pkg:lucide-react",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\LoginPage.jsx",
+      "target": "js_pkg:sweetalert2",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\LoginPage.jsx",
+      "target": "js_pkg:react",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\LoginPage.jsx",
+      "target": "js_pkg:@/components",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\MentorDashboard.jsx",
+      "target": "js_pkg:react-router-dom",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\MentorDashboard.jsx",
+      "target": "js_pkg:react",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\MentorDashboard.jsx",
+      "target": "js_pkg:@/components",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\StudentDashboard.jsx",
+      "target": "js_pkg:react-router-dom",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\StudentDashboard.jsx",
+      "target": "js_pkg:react",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\StudentDashboard.jsx",
+      "target": "js_pkg:@/components",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Admin\\Analytics.jsx",
+      "target": "js_pkg:react",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Admin\\AssignMentor.jsx",
+      "target": "js_pkg:react-toastify",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Admin\\AssignMentor.jsx",
+      "target": "js_pkg:axios",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Admin\\AssignMentor.jsx",
+      "target": "js_pkg:react",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Admin\\AssignMentor.jsx",
+      "target": "js_pkg:@/components",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Admin\\Mentors.jsx",
+      "target": "js_pkg:axios",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Admin\\Mentors.jsx",
+      "target": "js_pkg:react",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Admin\\Mentors.jsx",
+      "target": "js_pkg:@/components",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Admin\\Students.jsx",
+      "target": "js_pkg:axios",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Admin\\Students.jsx",
+      "target": "js_pkg:react",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Admin\\Students.jsx",
+      "target": "js_pkg:@/components",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Mentor\\AddStudent.jsx",
+      "target": "js_pkg:react",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Mentor\\Announcement.jsx",
+      "target": "js_pkg:axios",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Mentor\\Announcement.jsx",
+      "target": "js_pkg:react-toastify",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Mentor\\Announcement.jsx",
+      "target": "js_pkg:lucide-react",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Mentor\\Announcement.jsx",
+      "target": "js_pkg:react",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Mentor\\Announcement.jsx",
+      "target": "js_pkg:@/components",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Mentor\\CreateMeeting.jsx",
+      "target": "js_pkg:lucide-react",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Mentor\\CreateMeeting.jsx",
+      "target": "js_pkg:sweetalert2",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Mentor\\CreateMeeting.jsx",
+      "target": "js_pkg:react",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Mentor\\CreateMeeting.jsx",
+      "target": "js_pkg:@/components",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Mentor\\Material.jsx",
+      "target": "js_pkg:lucide-react",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Mentor\\Material.jsx",
+      "target": "js_pkg:axios",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Mentor\\Material.jsx",
+      "target": "js_pkg:react",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Mentor\\Material.jsx",
+      "target": "js_pkg:@/components",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Mentor\\PrivateChat.jsx",
+      "target": "js_pkg:sweetalert2",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Mentor\\PrivateChat.jsx",
+      "target": "js_pkg:axios",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Mentor\\PrivateChat.jsx",
+      "target": "js_pkg:lucide-react",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Mentor\\PrivateChat.jsx",
+      "target": "js_pkg:react",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Mentor\\PrivateChat.jsx",
+      "target": "js_pkg:@/components",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Mentor\\RemoveStudent.jsx",
+      "target": "js_pkg:react",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Mentor\\StudentList.jsx",
+      "target": "js_pkg:sweetalert2",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Mentor\\StudentList.jsx",
+      "target": "js_pkg:axios",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Mentor\\StudentList.jsx",
+      "target": "js_pkg:react",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Mentor\\StudentList.jsx",
+      "target": "js_pkg:@/components",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Student\\MentorInfo.jsx",
+      "target": "js_pkg:axios",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Student\\MentorInfo.jsx",
+      "target": "js_pkg:react",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Student\\MentorInfo.jsx",
+      "target": "js_pkg:react-icons",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Student\\PrivateChat.jsx",
+      "target": "js_pkg:sweetalert2",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Student\\PrivateChat.jsx",
+      "target": "js_pkg:axios",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Student\\PrivateChat.jsx",
+      "target": "js_pkg:lucide-react",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Student\\PrivateChat.jsx",
+      "target": "js_pkg:react",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Student\\PrivateChat.jsx",
+      "target": "js_pkg:@/components",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Student\\Schedule.jsx",
+      "target": "js_pkg:lucide-react",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Student\\Schedule.jsx",
+      "target": "js_pkg:sweetalert2",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Student\\Schedule.jsx",
+      "target": "js_pkg:react",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Student\\StudentAnnouncement.jsx",
+      "target": "js_pkg:axios",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Student\\StudentAnnouncement.jsx",
+      "target": "js_pkg:react-toastify",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Student\\StudentAnnouncement.jsx",
+      "target": "js_pkg:lucide-react",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Student\\StudentAnnouncement.jsx",
+      "target": "js_pkg:react",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Student\\StudentAnnouncement.jsx",
+      "target": "js_pkg:@/components",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Student\\StudyMaterial.jsx",
+      "target": "js_pkg:lucide-react",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Student\\StudyMaterial.jsx",
+      "target": "js_pkg:axios",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Student\\StudyMaterial.jsx",
+      "target": "js_pkg:react",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Student\\UserInfo.jsx",
+      "target": "js_pkg:axios",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Student\\UserInfo.jsx",
+      "target": "js_pkg:react",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\Component\\Student\\UserInfo.jsx",
+      "target": "js_pkg:react-icons",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\components\\ui\\avatar.jsx",
+      "target": "js_pkg:@radix-ui/react-avatar",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\components\\ui\\avatar.jsx",
+      "target": "js_pkg:@/lib",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\components\\ui\\avatar.jsx",
+      "target": "js_pkg:react",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\components\\ui\\badge.jsx",
+      "target": "js_pkg:@/lib",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\components\\ui\\badge.jsx",
+      "target": "js_pkg:react",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\components\\ui\\badge.jsx",
+      "target": "js_pkg:class-variance-authority",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\components\\ui\\button.jsx",
+      "target": "js_pkg:@radix-ui/react-slot",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\components\\ui\\button.jsx",
+      "target": "js_pkg:@/lib",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\components\\ui\\button.jsx",
+      "target": "js_pkg:react",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\components\\ui\\button.jsx",
+      "target": "js_pkg:class-variance-authority",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\components\\ui\\card.jsx",
+      "target": "js_pkg:@/lib",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\components\\ui\\card.jsx",
+      "target": "js_pkg:react",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\components\\ui\\command.jsx",
+      "target": "js_pkg:cmdk",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\components\\ui\\command.jsx",
+      "target": "js_pkg:@/lib",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\components\\ui\\command.jsx",
+      "target": "js_pkg:lucide-react",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\components\\ui\\command.jsx",
+      "target": "js_pkg:react",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\components\\ui\\command.jsx",
+      "target": "js_pkg:@/components",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\components\\ui\\dialog.jsx",
+      "target": "js_pkg:lucide-react",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\components\\ui\\dialog.jsx",
+      "target": "js_pkg:@/lib",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\components\\ui\\dialog.jsx",
+      "target": "js_pkg:react",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\components\\ui\\dialog.jsx",
+      "target": "js_pkg:@radix-ui/react-dialog",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\components\\ui\\input.jsx",
+      "target": "js_pkg:@/lib",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\components\\ui\\input.jsx",
+      "target": "js_pkg:react",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\components\\ui\\popover.jsx",
+      "target": "js_pkg:@/lib",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\components\\ui\\popover.jsx",
+      "target": "js_pkg:react",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\components\\ui\\popover.jsx",
+      "target": "js_pkg:@radix-ui/react-popover",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\components\\ui\\progress.jsx",
+      "target": "js_pkg:@/lib",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\components\\ui\\progress.jsx",
+      "target": "js_pkg:react",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\components\\ui\\progress.jsx",
+      "target": "js_pkg:@radix-ui/react-progress",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\components\\ui\\scroll-area.jsx",
+      "target": "js_pkg:@/lib",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\components\\ui\\scroll-area.jsx",
+      "target": "js_pkg:react",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\components\\ui\\scroll-area.jsx",
+      "target": "js_pkg:@radix-ui/react-scroll-area",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\components\\ui\\select.jsx",
+      "target": "js_pkg:lucide-react",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\components\\ui\\select.jsx",
+      "target": "js_pkg:@radix-ui/react-select",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\components\\ui\\select.jsx",
+      "target": "js_pkg:@/lib",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\components\\ui\\select.jsx",
+      "target": "js_pkg:react",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\components\\ui\\separator.jsx",
+      "target": "js_pkg:@/lib",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\components\\ui\\separator.jsx",
+      "target": "js_pkg:react",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\components\\ui\\separator.jsx",
+      "target": "js_pkg:@radix-ui/react-separator",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\components\\ui\\table.jsx",
+      "target": "js_pkg:@/lib",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\components\\ui\\table.jsx",
+      "target": "js_pkg:react",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\components\\ui\\tabs.jsx",
+      "target": "js_pkg:@radix-ui/react-tabs",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\components\\ui\\tabs.jsx",
+      "target": "js_pkg:react",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\components\\ui\\tabs.jsx",
+      "target": "js_pkg:@/lib",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\lib\\utils.js",
+      "target": "js_pkg:clsx",
+      "type": "external_import"
+    },
+    {
+      "source": "Frontend\\src\\lib\\utils.js",
+      "target": "js_pkg:tailwind-merge",
+      "type": "external_import"
+    }
+  ]
+}
