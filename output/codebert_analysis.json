@@ -1,688 +1,75 @@
 {
   "file_analysis": {
-    "Backend\\server.js": {
-      "quality_score": 0.5156150460243225,
-      "language": "JavaScript",
-      "lines_of_code": 41,
-      "comment_lines": 3,
-      "comment_ratio": 0.07317073170731707,
-      "suggestions": [
-        "Consider extracting hardcoded string literals into constants or configuration files.",
-        "Code quality is average. Consider adding more documentation and improving naming conventions."
-      ]
-    },
-    "Backend\\controllers\\addChatMessage.js": {
-      "quality_score": 0.5159478187561035,
-      "language": "JavaScript",
-      "lines_of_code": 45,
-      "comment_lines": 6,
-      "comment_ratio": 0.13333333333333333,
-      "suggestions": [
-        "Code quality is average. Consider adding more documentation and improving naming conventions."
-      ]
-    },
-    "Backend\\controllers\\addStudent.js": {
-      "quality_score": 0.5146608352661133,
-      "language": "JavaScript",
-      "lines_of_code": 49,
-      "comment_lines": 4,
-      "comment_ratio": 0.08163265306122448,
-      "suggestions": [
-        "Consider extracting hardcoded string literals into constants or configuration files.",
-        "Code quality is average. Consider adding more documentation and improving naming conventions."
-      ]
-    },
-    "Backend\\controllers\\assignMentor.js": {
-      "quality_score": 0.514012336730957,
-      "language": "JavaScript",
-      "lines_of_code": 47,
-      "comment_lines": 4,
-      "comment_ratio": 0.0851063829787234,
-      "suggestions": [
-        "Consider extracting hardcoded string literals into constants or configuration files.",
-        "Code quality is average. Consider adding more documentation and improving naming conventions.",
-        "Consider using '===' instead of '==' for strict equality comparisons."
-      ]
-    },
-    "Backend\\controllers\\authController.js": {
-      "quality_score": 0.5139802694320679,
-      "language": "JavaScript",
-      "lines_of_code": 76,
-      "comment_lines": 7,
-      "comment_ratio": 0.09210526315789473,
-      "suggestions": [
-        "Consider extracting hardcoded string literals into constants or configuration files.",
-        "Detected 1 potentially duplicated code patterns. Consider refactoring into reusable functions.",
-        "Code quality is average. Consider adding more documentation and improving naming conventions."
-      ]
-    },
-    "Backend\\controllers\\fetchChat.js": {
-      "quality_score": 0.5144184827804565,
-      "language": "JavaScript",
-      "lines_of_code": 32,
-      "comment_lines": 3,
-      "comment_ratio": 0.09375,
-      "suggestions": [
-        "Code quality is average. Consider adding more documentation and improving naming conventions."
-      ]
-    },
-    "Backend\\controllers\\getStudentList.js": {
-      "quality_score": 0.5165560245513916,
-      "language": "JavaScript",
-      "lines_of_code": 31,
-      "comment_lines": 0,
-      "comment_ratio": 0.0,
-      "suggestions": [
-        "Code quality is average. Consider adding more documentation and improving naming conventions."
-      ]
-    },
-    "Backend\\controllers\\removeStudent.js": {
-      "quality_score": 0.5127873420715332,
-      "language": "JavaScript",
-      "lines_of_code": 31,
-      "comment_lines": 0,
-      "comment_ratio": 0.0,
-      "suggestions": [
-        "Code quality is average. Consider adding more documentation and improving naming conventions.",
-        "Consider using '===' instead of '==' for strict equality comparisons."
-      ]
-    },
-    "Backend\\controllers\\uploadFile.js": {
-      "quality_score": 0.5137047171592712,
-      "language": "JavaScript",
-      "lines_of_code": 34,
-      "comment_lines": 1,
-      "comment_ratio": 0.029411764705882353,
-      "suggestions": [
-        "Code quality is average. Consider adding more documentation and improving naming conventions."
-      ]
-    },
-    "Backend\\controllers\\userInfo.js": {
-      "quality_score": 0.5133267641067505,
-      "language": "JavaScript",
-      "lines_of_code": 25,
-      "comment_lines": 0,
-      "comment_ratio": 0.0,
-      "suggestions": [
-        "Code quality is average. Consider adding more documentation and improving naming conventions."
-      ]
-    },
-    "Backend\\database\\connect.js": {
-      "quality_score": 0.5098755955696106,
-      "language": "JavaScript",
-      "lines_of_code": 18,
-      "comment_lines": 1,
-      "comment_ratio": 0.05555555555555555,
-      "suggestions": [
-        "Code quality is average. Consider adding more documentation and improving naming conventions."
-      ]
-    },
-    "Backend\\database\\Schema\\Mentor.js": {
-      "quality_score": 0.5173574686050415,
-      "language": "JavaScript",
-      "lines_of_code": 52,
-      "comment_lines": 0,
-      "comment_ratio": 0.0,
-      "suggestions": [
-        "Code quality is average. Consider adding more documentation and improving naming conventions."
-      ]
-    },
-    "Backend\\database\\Schema\\User.js": {
-      "quality_score": 0.5143419504165649,
-      "language": "JavaScript",
-      "lines_of_code": 16,
-      "comment_lines": 0,
-      "comment_ratio": 0.0,
-      "suggestions": [
-        "Code quality is average. Consider adding more documentation and improving naming conventions."
-      ]
-    },
-    "Backend\\middleware\\authMiddleware.js": {
-      "quality_score": 0.5154171586036682,
-      "language": "JavaScript",
-      "lines_of_code": 23,
-      "comment_lines": 0,
-      "comment_ratio": 0.0,
-      "suggestions": [
-        "Code quality is average. Consider adding more documentation and improving naming conventions."
-      ]
-    },
-    "Backend\\middleware\\multer.js": {
-      "quality_score": 0.5153955817222595,
-      "language": "JavaScript",
-      "lines_of_code": 12,
-      "comment_lines": 9,
-      "comment_ratio": 0.75,
-      "suggestions": [
-        "Code quality is average. Consider adding more documentation and improving naming conventions."
-      ]
-    },
-    "Backend\\routes\\admin.js": {
-      "quality_score": 0.5114315748214722,
-      "language": "JavaScript",
-      "lines_of_code": 14,
-      "comment_lines": 0,
-      "comment_ratio": 0.0,
-      "suggestions": [
-        "Code quality is average. Consider adding more documentation and improving naming conventions."
-      ]
-    },
-    "Backend\\routes\\auth.js": {
-      "quality_score": 0.5151197910308838,
-      "language": "JavaScript",
-      "lines_of_code": 18,
-      "comment_lines": 1,
-      "comment_ratio": 0.05555555555555555,
-      "suggestions": [
-        "Code quality is average. Consider adding more documentation and improving naming conventions."
-      ]
-    },
-    "Backend\\routes\\mentor.js": {
-      "quality_score": 0.5167165994644165,
-      "language": "JavaScript",
-      "lines_of_code": 39,
-      "comment_lines": 0,
-      "comment_ratio": 0.0,
-      "suggestions": [
-        "Consider extracting hardcoded string literals into constants or configuration files.",
-        "Code quality is average. Consider adding more documentation and improving naming conventions."
-      ]
-    },
-    "Backend\\routes\\student.js": {
-      "quality_score": 0.5121429562568665,
-      "language": "JavaScript",
-      "lines_of_code": 10,
-      "comment_lines": 0,
-      "comment_ratio": 0.0,
-      "suggestions": [
-        "Code quality is average. Consider adding more documentation and improving naming conventions."
-      ]
-    },
-    "Frontend\\eslint.config.js": {
-      "quality_score": 0.5156169533729553,
-      "language": "JavaScript",
-      "lines_of_code": 34,
-      "comment_lines": 0,
-      "comment_ratio": 0.0,
-      "suggestions": [
-        "Consider extracting hardcoded string literals into constants or configuration files.",
-        "Code quality is average. Consider adding more documentation and improving naming conventions."
-      ]
-    },
-    "Frontend\\tailwind.config.js": {
-      "quality_score": 0.5156130790710449,
-      "language": "JavaScript",
-      "lines_of_code": 59,
-      "comment_lines": 0,
-      "comment_ratio": 0.0,
-      "suggestions": [
-        "Consider extracting hardcoded string literals into constants or configuration files.",
-        "Code quality is average. Consider adding more documentation and improving naming conventions."
-      ]
-    },
-    "Frontend\\vite.config.js": {
-      "quality_score": 0.5142217874526978,
-      "language": "JavaScript",
-      "lines_of_code": 15,
-      "comment_lines": 1,
-      "comment_ratio": 0.06666666666666667,
-      "suggestions": [
-        "Code quality is average. Consider adding more documentation and improving naming conventions."
-      ]
-    },
-    "Frontend\\src\\App.jsx": {
-      "quality_score": 0.5230585932731628,
-      "language": "React JSX",
-      "lines_of_code": 80,
-      "comment_lines": 3,
-      "comment_ratio": 0.0375,
-      "suggestions": [
-        "Consider extracting hardcoded string literals into constants or configuration files.",
-        "Code quality is average. Consider adding more documentation and improving naming conventions."
-      ]
-    },
-    "Frontend\\src\\main.jsx": {
-      "quality_score": 0.5166730284690857,
-      "language": "React JSX",
-      "lines_of_code": 11,
-      "comment_lines": 0,
-      "comment_ratio": 0.0,
-      "suggestions": [
-        "Code quality is average. Consider adding more documentation and improving naming conventions."
-      ]
-    },
-    "Frontend\\src\\PrivateRoute.jsx": {
-      "quality_score": 0.5197156071662903,
-      "language": "React JSX",
-      "lines_of_code": 14,
-      "comment_lines": 0,
-      "comment_ratio": 0.0,
-      "suggestions": [
-        "Code quality is average. Consider adding more documentation and improving naming conventions."
-      ]
-    },
-    "Frontend\\src\\Component\\AdminDashboard.jsx": {
-      "quality_score": 0.5229810476303101,
-      "language": "React JSX",
-      "lines_of_code": 159,
+    "clone.py": {
+      "quality_score": 0.5271442532539368,
+      "language": "Python",
+      "lines_of_code": 62,
       "comment_lines": 2,
-      "comment_ratio": 0.012578616352201259,
+      "comment_ratio": 0.03225806451612903,
       "suggestions": [
         "Consider extracting hardcoded string literals into constants or configuration files.",
-        "Detected 2 potentially duplicated code patterns. Consider refactoring into reusable functions.",
         "Code quality is average. Consider adding more documentation and improving naming conventions."
       ]
     },
-    "Frontend\\src\\Component\\LandingPage.jsx": {
-      "quality_score": 0.5195727348327637,
-      "language": "React JSX",
-      "lines_of_code": 355,
-      "comment_lines": 0,
-      "comment_ratio": 0.0,
+    "codebert_analyzer.py": {
+      "quality_score": 0.531406581401825,
+      "language": "Python",
+      "lines_of_code": 277,
+      "comment_lines": 29,
+      "comment_ratio": 0.10469314079422383,
       "suggestions": [
         "Code is too large for detailed analysis. Consider breaking it into smaller modules."
       ]
     },
-    "Frontend\\src\\Component\\LoginPage.jsx": {
-      "quality_score": 0.5176931619644165,
-      "language": "React JSX",
-      "lines_of_code": 198,
-      "comment_lines": 4,
-      "comment_ratio": 0.020202020202020204,
+    "dependency_parser.py": {
+      "quality_score": 0.5241004824638367,
+      "language": "Python",
+      "lines_of_code": 279,
+      "comment_lines": 30,
+      "comment_ratio": 0.10752688172043011,
+      "suggestions": [
+        "Code is too large for detailed analysis. Consider breaking it into smaller modules."
+      ]
+    },
+    "graph_builder.py": {
+      "quality_score": 0.5286359786987305,
+      "language": "Python",
+      "lines_of_code": 210,
+      "comment_lines": 22,
+      "comment_ratio": 0.10476190476190476,
       "suggestions": [
         "Consider extracting hardcoded string literals into constants or configuration files.",
-        "Detected 12 potentially duplicated code patterns. Consider refactoring into reusable functions.",
+        "Deep nesting detected. Consider refactoring to reduce complexity and improve readability.",
         "Code quality is average. Consider adding more documentation and improving naming conventions."
       ]
     },
-    "Frontend\\src\\Component\\MentorDashboard.jsx": {
-      "quality_score": 0.5210400819778442,
-      "language": "React JSX",
-      "lines_of_code": 125,
-      "comment_lines": 0,
-      "comment_ratio": 0.0,
+    "main.py": {
+      "quality_score": 0.5302354097366333,
+      "language": "Python",
+      "lines_of_code": 300,
+      "comment_lines": 38,
+      "comment_ratio": 0.12666666666666668,
       "suggestions": [
-        "Consider extracting hardcoded string literals into constants or configuration files.",
-        "Detected 1 potentially duplicated code patterns. Consider refactoring into reusable functions.",
-        "Code quality is average. Consider adding more documentation and improving naming conventions."
+        "Code is too large for detailed analysis. Consider breaking it into smaller modules."
       ]
     },
-    "Frontend\\src\\Component\\StudentDashboard.jsx": {
-      "quality_score": 0.5234434008598328,
-      "language": "React JSX",
-      "lines_of_code": 153,
-      "comment_lines": 0,
-      "comment_ratio": 0.0,
+    "visualizer.py": {
+      "quality_score": 0.5314828753471375,
+      "language": "Python",
+      "lines_of_code": 548,
+      "comment_lines": 46,
+      "comment_ratio": 0.08394160583941605,
       "suggestions": [
-        "Consider extracting hardcoded string literals into constants or configuration files.",
-        "Code quality is average. Consider adding more documentation and improving naming conventions."
-      ]
-    },
-    "Frontend\\src\\Component\\Admin\\Analytics.jsx": {
-      "quality_score": 0.5129497051239014,
-      "language": "React JSX",
-      "lines_of_code": 11,
-      "comment_lines": 0,
-      "comment_ratio": 0.0,
-      "suggestions": [
-        "Code quality is average. Consider adding more documentation and improving naming conventions."
-      ]
-    },
-    "Frontend\\src\\Component\\Admin\\AssignMentor.jsx": {
-      "quality_score": 0.519137978553772,
-      "language": "React JSX",
-      "lines_of_code": 112,
-      "comment_lines": 2,
-      "comment_ratio": 0.017857142857142856,
-      "suggestions": [
-        "Consider extracting hardcoded string literals into constants or configuration files.",
-        "Detected 2 potentially duplicated code patterns. Consider refactoring into reusable functions.",
-        "Code quality is average. Consider adding more documentation and improving naming conventions."
-      ]
-    },
-    "Frontend\\src\\Component\\Admin\\Mentors.jsx": {
-      "quality_score": 0.5168891549110413,
-      "language": "React JSX",
-      "lines_of_code": 74,
-      "comment_lines": 2,
-      "comment_ratio": 0.02702702702702703,
-      "suggestions": [
-        "Consider extracting hardcoded string literals into constants or configuration files.",
-        "Code quality is average. Consider adding more documentation and improving naming conventions.",
-        "Consider using '===' instead of '==' for strict equality comparisons."
-      ]
-    },
-    "Frontend\\src\\Component\\Admin\\Students.jsx": {
-      "quality_score": 0.5158963203430176,
-      "language": "React JSX",
-      "lines_of_code": 74,
-      "comment_lines": 2,
-      "comment_ratio": 0.02702702702702703,
-      "suggestions": [
-        "Consider extracting hardcoded string literals into constants or configuration files.",
-        "Code quality is average. Consider adding more documentation and improving naming conventions.",
-        "Consider using '===' instead of '==' for strict equality comparisons."
-      ]
-    },
-    "Frontend\\src\\Component\\Mentor\\AddStudent.jsx": {
-      "quality_score": 0.5171452760696411,
-      "language": "React JSX",
-      "lines_of_code": 10,
-      "comment_lines": 0,
-      "comment_ratio": 0.0,
-      "suggestions": [
-        "Code quality is average. Consider adding more documentation and improving naming conventions."
-      ]
-    },
-    "Frontend\\src\\Component\\Mentor\\Announcement.jsx": {
-      "quality_score": 0.5185848474502563,
-      "language": "React JSX",
-      "lines_of_code": 213,
-      "comment_lines": 0,
-      "comment_ratio": 0.0,
-      "suggestions": [
-        "Consider extracting hardcoded string literals into constants or configuration files.",
-        "Detected 12 potentially duplicated code patterns. Consider refactoring into reusable functions.",
-        "Code quality is average. Consider adding more documentation and improving naming conventions."
-      ]
-    },
-    "Frontend\\src\\Component\\Mentor\\CreateMeeting.jsx": {
-      "quality_score": 0.5183624029159546,
-      "language": "React JSX",
-      "lines_of_code": 203,
-      "comment_lines": 0,
-      "comment_ratio": 0.0,
-      "suggestions": [
-        "Consider extracting hardcoded string literals into constants or configuration files.",
-        "Detected 10 potentially duplicated code patterns. Consider refactoring into reusable functions.",
-        "Code quality is average. Consider adding more documentation and improving naming conventions.",
-        "Consider using '===' instead of '==' for strict equality comparisons."
-      ]
-    },
-    "Frontend\\src\\Component\\Mentor\\Material.jsx": {
-      "quality_score": 0.5183992385864258,
-      "language": "React JSX",
-      "lines_of_code": 202,
-      "comment_lines": 7,
-      "comment_ratio": 0.034653465346534656,
-      "suggestions": [
-        "Consider extracting hardcoded string literals into constants or configuration files.",
-        "Detected 5 potentially duplicated code patterns. Consider refactoring into reusable functions.",
-        "Code quality is average. Consider adding more documentation and improving naming conventions."
-      ]
-    },
-    "Frontend\\src\\Component\\Mentor\\PrivateChat.jsx": {
-      "quality_score": 0.5167797207832336,
-      "language": "React JSX",
-      "lines_of_code": 181,
-      "comment_lines": 2,
-      "comment_ratio": 0.011049723756906077,
-      "suggestions": [
-        "Consider extracting hardcoded string literals into constants or configuration files.",
-        "Code quality is average. Consider adding more documentation and improving naming conventions."
-      ]
-    },
-    "Frontend\\src\\Component\\Mentor\\RemoveStudent.jsx": {
-      "quality_score": 0.519576370716095,
-      "language": "React JSX",
-      "lines_of_code": 10,
-      "comment_lines": 0,
-      "comment_ratio": 0.0,
-      "suggestions": [
-        "Code quality is average. Consider adding more documentation and improving naming conventions."
-      ]
-    },
-    "Frontend\\src\\Component\\Mentor\\StudentList.jsx": {
-      "quality_score": 0.512846827507019,
-      "language": "React JSX",
-      "lines_of_code": 134,
-      "comment_lines": 3,
-      "comment_ratio": 0.022388059701492536,
-      "suggestions": [
-        "Consider extracting hardcoded string literals into constants or configuration files.",
-        "Detected 2 potentially duplicated code patterns. Consider refactoring into reusable functions.",
-        "Code quality is average. Consider adding more documentation and improving naming conventions."
-      ]
-    },
-    "Frontend\\src\\Component\\Student\\MentorInfo.jsx": {
-      "quality_score": 0.5164865255355835,
-      "language": "React JSX",
-      "lines_of_code": 100,
-      "comment_lines": 2,
-      "comment_ratio": 0.02,
-      "suggestions": [
-        "Consider extracting hardcoded string literals into constants or configuration files.",
-        "Code quality is average. Consider adding more documentation and improving naming conventions."
-      ]
-    },
-    "Frontend\\src\\Component\\Student\\PrivateChat.jsx": {
-      "quality_score": 0.5152783393859863,
-      "language": "React JSX",
-      "lines_of_code": 178,
-      "comment_lines": 6,
-      "comment_ratio": 0.033707865168539325,
-      "suggestions": [
-        "Consider extracting hardcoded string literals into constants or configuration files.",
-        "Code quality is average. Consider adding more documentation and improving naming conventions."
-      ]
-    },
-    "Frontend\\src\\Component\\Student\\Schedule.jsx": {
-      "quality_score": 0.5114233493804932,
-      "language": "React JSX",
-      "lines_of_code": 90,
-      "comment_lines": 0,
-      "comment_ratio": 0.0,
-      "suggestions": [
-        "Consider extracting hardcoded string literals into constants or configuration files.",
-        "Detected 3 potentially duplicated code patterns. Consider refactoring into reusable functions.",
-        "Code quality is average. Consider adding more documentation and improving naming conventions.",
-        "Consider using '===' instead of '==' for strict equality comparisons."
-      ]
-    },
-    "Frontend\\src\\Component\\Student\\StudentAnnouncement.jsx": {
-      "quality_score": 0.5176222324371338,
-      "language": "React JSX",
-      "lines_of_code": 167,
-      "comment_lines": 0,
-      "comment_ratio": 0.0,
-      "suggestions": [
-        "Consider extracting hardcoded string literals into constants or configuration files.",
-        "Detected 3 potentially duplicated code patterns. Consider refactoring into reusable functions.",
-        "Code quality is average. Consider adding more documentation and improving naming conventions."
-      ]
-    },
-    "Frontend\\src\\Component\\Student\\StudyMaterial.jsx": {
-      "quality_score": 0.5157632231712341,
-      "language": "React JSX",
-      "lines_of_code": 156,
-      "comment_lines": 3,
-      "comment_ratio": 0.019230769230769232,
-      "suggestions": [
-        "Consider extracting hardcoded string literals into constants or configuration files.",
-        "Detected 3 potentially duplicated code patterns. Consider refactoring into reusable functions.",
-        "Code quality is average. Consider adding more documentation and improving naming conventions."
-      ]
-    },
-    "Frontend\\src\\Component\\Student\\UserInfo.jsx": {
-      "quality_score": 0.5179305076599121,
-      "language": "React JSX",
-      "lines_of_code": 114,
-      "comment_lines": 2,
-      "comment_ratio": 0.017543859649122806,
-      "suggestions": [
-        "Consider extracting hardcoded string literals into constants or configuration files.",
-        "Code quality is average. Consider adding more documentation and improving naming conventions."
-      ]
-    },
-    "Frontend\\src\\components\\ui\\avatar.jsx": {
-      "quality_score": 0.5181419849395752,
-      "language": "React JSX",
-      "lines_of_code": 34,
-      "comment_lines": 0,
-      "comment_ratio": 0.0,
-      "suggestions": [
-        "Code quality is average. Consider adding more documentation and improving naming conventions."
-      ]
-    },
-    "Frontend\\src\\components\\ui\\badge.jsx": {
-      "quality_score": 0.5181146860122681,
-      "language": "React JSX",
-      "lines_of_code": 35,
-      "comment_lines": 0,
-      "comment_ratio": 0.0,
-      "suggestions": [
-        "Code quality is average. Consider adding more documentation and improving naming conventions."
-      ]
-    },
-    "Frontend\\src\\components\\ui\\button.jsx": {
-      "quality_score": 0.5127791166305542,
-      "language": "React JSX",
-      "lines_of_code": 49,
-      "comment_lines": 0,
-      "comment_ratio": 0.0,
-      "suggestions": [
-        "Consider extracting hardcoded string literals into constants or configuration files.",
-        "Code quality is average. Consider adding more documentation and improving naming conventions."
-      ]
-    },
-    "Frontend\\src\\components\\ui\\card.jsx": {
-      "quality_score": 0.5241026282310486,
-      "language": "React JSX",
-      "lines_of_code": 51,
-      "comment_lines": 0,
-      "comment_ratio": 0.0,
-      "suggestions": [
-        "Consider extracting hardcoded string literals into constants or configuration files.",
-        "Code quality is average. Consider adding more documentation and improving naming conventions."
-      ]
-    },
-    "Frontend\\src\\components\\ui\\command.jsx": {
-      "quality_score": 0.5209907293319702,
-      "language": "React JSX",
-      "lines_of_code": 117,
-      "comment_lines": 0,
-      "comment_ratio": 0.0,
-      "suggestions": [
-        "Consider extracting hardcoded string literals into constants or configuration files.",
-        "Detected 3 potentially duplicated code patterns. Consider refactoring into reusable functions.",
-        "Code quality is average. Consider adding more documentation and improving naming conventions."
-      ]
-    },
-    "Frontend\\src\\components\\ui\\dialog.jsx": {
-      "quality_score": 0.5133727192878723,
-      "language": "React JSX",
-      "lines_of_code": 97,
-      "comment_lines": 0,
-      "comment_ratio": 0.0,
-      "suggestions": [
-        "Consider extracting hardcoded string literals into constants or configuration files.",
-        "Detected 2 potentially duplicated code patterns. Consider refactoring into reusable functions.",
-        "Code quality is average. Consider adding more documentation and improving naming conventions."
-      ]
-    },
-    "Frontend\\src\\components\\ui\\input.jsx": {
-      "quality_score": 0.5173249840736389,
-      "language": "React JSX",
-      "lines_of_code": 20,
-      "comment_lines": 0,
-      "comment_ratio": 0.0,
-      "suggestions": [
-        "Code quality is average. Consider adding more documentation and improving naming conventions."
-      ]
-    },
-    "Frontend\\src\\components\\ui\\popover.jsx": {
-      "quality_score": 0.5163677930831909,
-      "language": "React JSX",
-      "lines_of_code": 28,
-      "comment_lines": 0,
-      "comment_ratio": 0.0,
-      "suggestions": [
-        "Code quality is average. Consider adding more documentation and improving naming conventions."
-      ]
-    },
-    "Frontend\\src\\components\\ui\\progress.jsx": {
-      "quality_score": 0.5183493494987488,
-      "language": "React JSX",
-      "lines_of_code": 22,
-      "comment_lines": 0,
-      "comment_ratio": 0.0,
-      "suggestions": [
-        "Code quality is average. Consider adding more documentation and improving naming conventions."
-      ]
-    },
-    "Frontend\\src\\components\\ui\\scroll-area.jsx": {
-      "quality_score": 0.5176602602005005,
-      "language": "React JSX",
-      "lines_of_code": 39,
-      "comment_lines": 0,
-      "comment_ratio": 0.0,
-      "suggestions": [
-        "Consider extracting hardcoded string literals into constants or configuration files.",
-        "Code quality is average. Consider adding more documentation and improving naming conventions."
-      ]
-    },
-    "Frontend\\src\\components\\ui\\select.jsx": {
-      "quality_score": 0.5174230337142944,
-      "language": "React JSX",
-      "lines_of_code": 120,
-      "comment_lines": 0,
-      "comment_ratio": 0.0,
-      "suggestions": [
-        "Consider extracting hardcoded string literals into constants or configuration files.",
-        "Detected 2 potentially duplicated code patterns. Consider refactoring into reusable functions.",
-        "Code quality is average. Consider adding more documentation and improving naming conventions."
-      ]
-    },
-    "Frontend\\src\\components\\ui\\separator.jsx": {
-      "quality_score": 0.5183746218681335,
-      "language": "React JSX",
-      "lines_of_code": 26,
-      "comment_lines": 0,
-      "comment_ratio": 0.0,
-      "suggestions": [
-        "Code quality is average. Consider adding more documentation and improving naming conventions."
-      ]
-    },
-    "Frontend\\src\\components\\ui\\table.jsx": {
-      "quality_score": 0.5200138688087463,
-      "language": "React JSX",
-      "lines_of_code": 87,
-      "comment_lines": 0,
-      "comment_ratio": 0.0,
-      "suggestions": [
-        "Consider extracting hardcoded string literals into constants or configuration files.",
-        "Detected 2 potentially duplicated code patterns. Consider refactoring into reusable functions.",
-        "Code quality is average. Consider adding more documentation and improving naming conventions."
-      ]
-    },
-    "Frontend\\src\\components\\ui\\tabs.jsx": {
-      "quality_score": 0.5155043601989746,
-      "language": "React JSX",
-      "lines_of_code": 44,
-      "comment_lines": 0,
-      "comment_ratio": 0.0,
-      "suggestions": [
-        "Detected 2 potentially duplicated code patterns. Consider refactoring into reusable functions.",
-        "Code quality is average. Consider adding more documentation and improving naming conventions."
-      ]
-    },
-    "Frontend\\src\\lib\\utils.js": {
-      "quality_score": 0.5111535787582397,
-      "language": "JavaScript",
-      "lines_of_code": 7,
-      "comment_lines": 0,
-      "comment_ratio": 0.0,
-      "suggestions": [
-        "Code quality is average. Consider adding more documentation and improving naming conventions."
+        "Code is too large for detailed analysis. Consider breaking it into smaller modules."
       ]
     }
   },
   "most_complex_files": [
-    "Backend\\database\\connect.js",
-    "Frontend\\src\\lib\\utils.js",
-    "Frontend\\src\\Component\\Student\\Schedule.jsx",
-    "Backend\\routes\\admin.js",
-    "Backend\\routes\\student.js"
+    "dependency_parser.py",
+    "clone.py",
+    "graph_builder.py",
+    "main.py",
+    "codebert_analyzer.py"
   ],
   "overall_suggestions": [
     "The codebase has a low comment ratio. Consider improving documentation to enhance maintainability."

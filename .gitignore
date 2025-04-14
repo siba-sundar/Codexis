@@ -139,3 +139,7 @@ cython_debug/
 
 
 repo-analyzer
+
+test/
+output
+temp_repo/

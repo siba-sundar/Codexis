@@ -1,325 +1,79 @@
 {
   "python": {
-    "files": {},
-    "requirements": {}
-  },
-  "javascript": {
     "files": {
-      "Backend\\server.js": [
-        "cors",
-        "mongoose",
-        "express"
+      "clone.py": [
+        "os",
+        "git",
+        "logging",
+        "shutil"
       ],
-      "Backend\\controllers\\addChatMessage.js": [
-        "mongoose"
+      "codebert_analyzer.py": [
+        "torch",
+        "os",
+        "logging",
+        "tqdm",
+        "transformers"
       ],
-      "Backend\\controllers\\addStudent.js": [
-        "mongoose"
+      "dependency_parser.py": [
+        "esprima",
+        "ast",
+        "astroid",
+        "bs4",
+        "os",
+        "logging",
+        "json",
+        "re"
       ],
-      "Backend\\controllers\\assignMentor.js": [
-        "mongoose"
+      "graph_builder.py": [
+        "community",
+        "logging",
+        "networkx"
       ],
-      "Backend\\controllers\\authController.js": [
-        "jsonwebtoken",
-        "bcryptjs",
-        "dotenv"
+      "main.py": [
+        "graph_builder",
+        "dependency_parser",
+        "codebert_analyzer",
+        "os",
+        "sys",
+        "urllib",
+        "argparse",
+        "logging",
+        "time",
+        "clone",
+        "shutil",
+        "visualizer",
+        "json"
       ],
-      "Backend\\controllers\\fetchChat.js": [
-        "mongoose"
-      ],
-      "Backend\\controllers\\getStudentList.js": [
-        "mongoose"
-      ],
-      "Backend\\controllers\\removeStudent.js": [
-        "mongoose"
-      ],
-      "Backend\\controllers\\uploadFile.js": [
-        "multer"
-      ],
-      "Backend\\controllers\\userInfo.js": [
-        "mongoose"
-      ],
-      "Backend\\database\\connect.js": [
-        "mongoose"
-      ],
-      "Backend\\database\\Schema\\Mentor.js": [
-        "mongoose"
-      ],
-      "Backend\\database\\Schema\\User.js": [
-        "mongoose"
-      ],
-      "Backend\\middleware\\authMiddleware.js": [
-        "jsonwebtoken"
-      ],
-      "Backend\\middleware\\multer.js": [
-        "multer"
-      ],
-      "Backend\\routes\\admin.js": [
-        "express"
-      ],
-      "Backend\\routes\\auth.js": [
-        "express"
-      ],
-      "Backend\\routes\\mentor.js": [
-        "multer",
-        "express"
-      ],
-      "Backend\\routes\\student.js": [
-        "express"
-      ],
-      "Frontend\\eslint.config.js": [
-        "@eslint/js",
-        "globals",
-        "eslint-plugin-react-hooks",
-        "eslint-plugin-react-refresh"
-      ],
-      "Frontend\\tailwind.config.js": [
-        "tailwindcss-animate"
-      ],
-      "Frontend\\vite.config.js": [
-        "vite",
-        "path",
-        "@vitejs/plugin-react"
-      ],
-      "Frontend\\src\\App.jsx": [
-        "react-router-dom"
-      ],
-      "Frontend\\src\\main.jsx": [
-        "react",
-        "react-dom"
-      ],
-      "Frontend\\src\\PrivateRoute.jsx": [
-        "react-router-dom"
-      ],
-      "Frontend\\src\\Component\\AdminDashboard.jsx": [
-        "react-router-dom",
-        "react",
-        "@/components"
-      ],
-      "Frontend\\src\\Component\\LandingPage.jsx": [
-        "react-router-dom"
-      ],
-      "Frontend\\src\\Component\\LoginPage.jsx": [
-        "lucide-react",
-        "sweetalert2",
-        "react",
-        "@/components"
-      ],
-      "Frontend\\src\\Component\\MentorDashboard.jsx": [
-        "react-router-dom",
-        "react",
-        "@/components"
-      ],
-      "Frontend\\src\\Component\\StudentDashboard.jsx": [
-        "react-router-dom",
-        "react",
-        "@/components"
-      ],
-      "Frontend\\src\\Component\\Admin\\Analytics.jsx": [
-        "react"
-      ],
-      "Frontend\\src\\Component\\Admin\\AssignMentor.jsx": [
-        "react-toastify",
-        "axios",
-        "react",
-        "@/components"
-      ],
-      "Frontend\\src\\Component\\Admin\\Mentors.jsx": [
-        "axios",
-        "react",
-        "@/components"
-      ],
-      "Frontend\\src\\Component\\Admin\\Students.jsx": [
-        "axios",
-        "react",
-        "@/components"
-      ],
-      "Frontend\\src\\Component\\Mentor\\AddStudent.jsx": [
-        "react"
-      ],
-      "Frontend\\src\\Component\\Mentor\\Announcement.jsx": [
-        "axios",
-        "react-toastify",
-        "lucide-react",
-        "react",
-        "@/components"
-      ],
-      "Frontend\\src\\Component\\Mentor\\CreateMeeting.jsx": [
-        "lucide-react",
-        "sweetalert2",
-        "react",
-        "@/components"
-      ],
-      "Frontend\\src\\Component\\Mentor\\Material.jsx": [
-        "lucide-react",
-        "axios",
-        "react",
-        "@/components"
-      ],
-      "Frontend\\src\\Component\\Mentor\\PrivateChat.jsx": [
-        "sweetalert2",
-        "axios",
-        "lucide-react",
-        "react",
-        "@/components"
-      ],
-      "Frontend\\src\\Component\\Mentor\\RemoveStudent.jsx": [
-        "react"
-      ],
-      "Frontend\\src\\Component\\Mentor\\StudentList.jsx": [
-        "sweetalert2",
-        "axios",
-        "react",
-        "@/components"
-      ],
-      "Frontend\\src\\Component\\Student\\MentorInfo.jsx": [
-        "axios",
-        "react",
-        "react-icons"
-      ],
-      "Frontend\\src\\Component\\Student\\PrivateChat.jsx": [
-        "sweetalert2",
-        "axios",
-        "lucide-react",
-        "react",
-        "@/components"
-      ],
-      "Frontend\\src\\Component\\Student\\Schedule.jsx": [
-        "lucide-react",
-        "sweetalert2",
-        "react"
-      ],
-      "Frontend\\src\\Component\\Student\\StudentAnnouncement.jsx": [
-        "axios",
-        "react-toastify",
-        "lucide-react",
-        "react",
-        "@/components"
-      ],
-      "Frontend\\src\\Component\\Student\\StudyMaterial.jsx": [
-        "lucide-react",
-        "axios",
-        "react"
-      ],
-      "Frontend\\src\\Component\\Student\\UserInfo.jsx": [
-        "axios",
-        "react",
-        "react-icons"
-      ],
-      "Frontend\\src\\components\\ui\\avatar.jsx": [
-        "@radix-ui/react-avatar",
-        "@/lib",
-        "react"
-      ],
-      "Frontend\\src\\components\\ui\\badge.jsx": [
-        "@/lib",
-        "react",
-        "class-variance-authority"
-      ],
-      "Frontend\\src\\components\\ui\\button.jsx": [
-        "@radix-ui/react-slot",
-        "@/lib",
-        "react",
-        "class-variance-authority"
-      ],
-      "Frontend\\src\\components\\ui\\card.jsx": [
-        "@/lib",
-        "react"
-      ],
-      "Frontend\\src\\components\\ui\\command.jsx": [
-        "cmdk",
-        "@/lib",
-        "lucide-react",
-        "react",
-        "@/components"
-      ],
-      "Frontend\\src\\components\\ui\\dialog.jsx": [
-        "lucide-react",
-        "@/lib",
-        "react",
-        "@radix-ui/react-dialog"
-      ],
-      "Frontend\\src\\components\\ui\\input.jsx": [
-        "@/lib",
-        "react"
-      ],
-      "Frontend\\src\\components\\ui\\popover.jsx": [
-        "@/lib",
-        "react",
-        "@radix-ui/react-popover"
-      ],
-      "Frontend\\src\\components\\ui\\progress.jsx": [
-        "@/lib",
-        "react",
-        "@radix-ui/react-progress"
-      ],
-      "Frontend\\src\\components\\ui\\scroll-area.jsx": [
-        "@/lib",
-        "react",
-        "@radix-ui/react-scroll-area"
-      ],
-      "Frontend\\src\\components\\ui\\select.jsx": [
-        "lucide-react",
-        "@radix-ui/react-select",
-        "@/lib",
-        "react"
-      ],
-      "Frontend\\src\\components\\ui\\separator.jsx": [
-        "@/lib",
-        "react",
-        "@radix-ui/react-separator"
-      ],
-      "Frontend\\src\\components\\ui\\table.jsx": [
-        "@/lib",
-        "react"
-      ],
-      "Frontend\\src\\components\\ui\\tabs.jsx": [
-        "@radix-ui/react-tabs",
-        "react",
-        "@/lib"
-      ],
-      "Frontend\\src\\lib\\utils.js": [
-        "clsx",
-        "tailwind-merge"
+      "visualizer.py": [
+        "pyvis",
+        "matplotlib.pyplot",
+        "os",
+        "platform",
+        "logging",
+        "networkx",
+        "shutil",
+        "time",
+        "json"
       ]
     },
-    "package_json": {
-      "@radix-ui/react-avatar": "^1.1.3",
-      "@radix-ui/react-dialog": "^1.1.6",
-      "@radix-ui/react-popover": "^1.1.6",
-      "@radix-ui/react-progress": "^1.1.2",
-      "@radix-ui/react-scroll-area": "^1.2.3",
-      "@radix-ui/react-select": "^2.1.6",
-      "@radix-ui/react-separator": "^1.1.2",
-      "@radix-ui/react-slot": "^1.1.2",
-      "@radix-ui/react-tabs": "^1.1.3",
-      "@tailwindcss/vite": "^4.0.14",
-      "axios": "^1.8.4",
-      "class-variance-authority": "^0.7.1",
-      "classnames": "^2.5.1",
-      "clsx": "^2.1.1",
-      "cmdk": "^1.0.0",
-      "lucide-react": "^0.483.0",
-      "react": "^19.0.0",
-      "react-dom": "^19.0.0",
-      "react-icons": "^5.5.0",
-      "react-router-dom": "^7.4.0",
-      "react-toastify": "^11.0.5",
-      "sweetalert2": "^11.17.2",
-      "tailwind-merge": "^3.0.2",
-      "tailwindcss-animate": "^1.0.7",
-      "@eslint/js": "^9.21.0",
-      "@types/react": "^19.0.10",
-      "@types/react-dom": "^19.0.4",
-      "@vitejs/plugin-react": "^4.3.4",
-      "autoprefixer": "^10.4.21",
-      "eslint": "^9.21.0",
-      "eslint-plugin-react-hooks": "^5.1.0",
-      "eslint-plugin-react-refresh": "^0.4.19",
-      "globals": "^15.15.0",
-      "postcss": "^8.5.3",
-      "tailwindcss": "^3.4.17",
-      "vite": "^6.2.0"
+    "requirements": {
+      "GitPython": "git",
+      "networkx": "3.1",
+      "pyvis": "0.3.2",
+      "transformers": "4.30.2",
+      "torch": "2.0.1",
+      "pygithub": "1.59.0",
+      "tqdm": "4.65.0",
+      "beautifulsoup4": "4.12.2",
+      "esprima": "4.0.1",
+      "astroid": "2.15.6",
+      "numpy": "2.0",
+      "matplotlib": "3.8.0  # Latest version with NumPy 2.x support",
+      "pybind11": "2.12"
     }
+  },
+  "javascript": {
+    "files": {},
+    "package_json": {}
   }
 }

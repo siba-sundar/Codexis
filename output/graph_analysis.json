@@ -1,82 +1,82 @@
 {
   "stats": {
-    "total_nodes": 100,
-    "total_edges": 153,
-    "python_files": 0,
-    "js_files": 62,
-    "python_packages": 0,
-    "js_packages": 36
+    "total_nodes": 33,
+    "total_edges": 42,
+    "python_files": 6,
+    "js_files": 0,
+    "python_packages": 13,
+    "js_packages": 0
   },
   "central_nodes": {
     "degree": [
       [
-        "js_pkg:react",
-        0.36363636363636365
+        "main.py",
+        0.40625
       ],
       [
-        "js_pkg:@/components",
-        0.15151515151515152
+        "visualizer.py",
+        0.28125
       ],
       [
-        "js_pkg:@/lib",
-        0.14141414141414144
+        "dependency_parser.py",
+        0.25
       ],
       [
-        "js_pkg:lucide-react",
-        0.12121212121212122
+        "py_pkg:logging",
+        0.1875
       ],
       [
-        "js_pkg:axios",
-        0.12121212121212122
+        "py_pkg:os",
+        0.15625
       ]
     ],
     "betweenness": [
       [
-        "Backend\\server.js",
+        "clone.py",
         0.0
       ],
       [
-        "js_pkg:cors",
+        "py_pkg:os",
         0.0
       ],
       [
-        "js_pkg:mongoose",
+        "py_pkg:git",
         0.0
       ],
       [
-        "js_pkg:express",
+        "py_pkg:logging",
         0.0
       ],
       [
-        "Backend\\controllers\\addChatMessage.js",
+        "py_pkg:shutil",
         0.0
       ]
     ],
     "pagerank": [
       [
-        "js_pkg:react",
-        0.08077314451736323
+        "py_pkg:logging",
+        0.050706084029284816
       ],
       [
-        "js_pkg:mongoose",
-        0.06407261225054965
+        "py_pkg:os",
+        0.04326961492407195
       ],
       [
-        "js_pkg:@/lib",
-        0.03317662755694459
+        "py_pkg:networkx",
+        0.0361620665677435
       ],
       [
-        "js_pkg:react-router-dom",
-        0.028815933020609946
+        "py_pkg:shutil",
+        0.0360190575464894
       ],
       [
-        "js_pkg:@/components",
-        0.028352029346531787
+        "py_pkg:community",
+        0.03368324353267254
       ]
     ]
   },
   "clusters": 0,
-  "density": 0.015454545454545455,
+  "density": 0.03977272727272727,
   "avg_clustering": 0.0,
   "recommendations": [
     "Low clustering coefficient suggests poor code organization. Consider grouping related functionality."

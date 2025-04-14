@@ -252,7 +252,7 @@ class DependencyVisualizer:
                 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
             """
             
-            # Save with custom HTML
+            # Save with custom HTML to get the basic graph structure
             net.save_graph(output_path)
             
             # Read the generated HTML
@@ -264,10 +264,27 @@ class DependencyVisualizer:
             script_end = pyvis_html.find('</script>', script_start) + len('</script>')
             vis_script = pyvis_html[script_start:script_end]
             
-            # Modify vis script to handle null element errors
-            vis_script = vis_script.replace(
-                'function drawGraph() {',
-                '''function drawGraph() {
+            # Fix the JavaScript by ensuring proper structure with try-catch block
+            vis_script_fixed = """
+            <script type="text/javascript">
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
                   // Check if the network container exists before proceeding
                   var container = document.getElementById('mynetwork');
                   if (!container) {
@@ -275,38 +292,107 @@ class DependencyVisualizer:
                       return;
                   }
                   
-                  try {'''
-            )
-            
-            # Add closing try-catch to handle any unexpected errors
-            vis_script = vis_script.replace(
-                'network.on("stabilizationProgress", function(params) {',
-                '''  } catch (error) {
-                      console.error("Error in graph initialization:", error);
+                  try {
+                      // Get a DOM element from the document
+                      container = document.getElementById('mynetwork');
+    
+                      // Load the data into vis DataSet
+                      nodes = new vis.DataSet(DATA_NODES_PLACEHOLDER);
+                      edges = new vis.DataSet(DATA_EDGES_PLACEHOLDER);
+                      
+                      nodeColors = {};
+                      allNodes = nodes.get({ returnType: "Object" });
+                      for (nodeId in allNodes) {
+                        nodeColors[nodeId] = allNodes[nodeId].color;
+                      }
+                      allEdges = edges.get({ returnType: "Object" });
+                      
+                      // adding nodes and edges to the graph
+                      data = {nodes: nodes, edges: edges};
+    
+                      var options = {
+                          "physics": {
+                              "barnesHut": {
+                                  "gravitationalConstant": -2000,
+                                  "centralGravity": 0.3,
+                                  "springLength": 95,
+                                  "springConstant": 0.04,
+                                  "damping": 0.09,
+                                  "avoidOverlap": 0.1
+                              },
+                              "minVelocity": 0.75
+                          },
+                          "layout": {
+                              "improvedLayout": false
+                          },
+                          "nodes": {
+                              "font": {
+                                  "size": 12,
+                                  "face": "Tahoma"
+                              }
+                          },
+                          "edges": {
+                              "color": {
+                                  "inherit": true
+                              },
+                              "smooth": {
+                                  "enabled": false
+                              }
+                          },
+                          "interaction": {
+                              "multiselect": true,
+                              "navigationButtons": true
+                          }
+                      };
+    
+                      // Initialize the network
+                      network = new vis.Network(container, data, options);
+                      
+                      return network;
+                  } catch (error) {
+                      console.error("Error in graph rendering:", error);
+                      if (container) {
+                          container.innerHTML = '<div class="alert alert-danger">Error rendering graph: ' + error.message + '</div>';
+                      }
+                      return null;
                   }
-                  
-                  network.on("stabilizationProgress", function(params) {'''
-            )
+              }
+            </script>
+            """
             
-            # Fix potential removeAttribute error
-            vis_script = vis_script.replace(
-                'document.getElementById("loadingBar").style.opacity = 0;',
-                '''var loadingBar = document.getElementById("loadingBar");
-                      if (loadingBar) {
-                          loadingBar.style.opacity = 0;
-                      }'''
-            )
+            # Prepare the node and edge data for JavaScript
+            nodes_json = json.dumps([
+                {
+                    'id': node,
+                    'label': self.graph.nodes[node].get('label', node),
+                    'title': self.graph.nodes[node].get('title', node),
+                    'color': node_colors.get(self.graph.nodes[node].get('type'), "#CCCCCC"),
+                    'shape': 'dot',
+                    'size': 10 if self.graph.nodes[node].get('type') in ['python_package', 'js_package'] else 15
+                }
+                for node in self.graph.nodes()
+            ])
             
-            vis_script = vis_script.replace(
-                'document.getElementById("loadingBar").removeAttribute("style");',
-                '''var loadingBar = document.getElementById("loadingBar");
-                      if (loadingBar) {
-                          loadingBar.removeAttribute("style");
-                      }'''
-            )
+            edges_json = json.dumps([
+                {
+                    'from': source,
+                    'to': target,
+                    'color': {
+                        'color': "#007bff" if self.graph.edges[source, target].get('type') == 'internal_import'
+                              else "#28a745" if self.graph.edges[source, target].get('type') == 'external_import'
+                              else "#cccccc"
+                    },
+                    'arrows': 'to'
+                }
+                for source, target in self.graph.edges()
+            ])
             
-            # Complete the HTML template with the modified vis.js script
-            complete_html = html_template + vis_script + """
+            # Replace the placeholders with actual data
+            vis_script_fixed = vis_script_fixed.replace('DATA_NODES_PLACEHOLDER', nodes_json)
+            vis_script_fixed = vis_script_fixed.replace('DATA_EDGES_PLACEHOLDER', edges_json)
+            
+            # Complete the HTML template with the fixed script and add initialization
+            complete_html = html_template + vis_script_fixed + """
             <script>
                 // Wait until DOM is fully loaded before initializing the network
                 document.addEventListener('DOMContentLoaded', function() {
@@ -333,8 +419,31 @@ class DependencyVisualizer:
             
         except Exception as e:
             logger.error(f"Error creating visualization: {e}")
+            # Create a simple error HTML if visualization fails
+            error_html = f"""
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="utf-8">
+                <title>Dependency Graph Error</title>
+                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+            </head>
+            <body>
+                <div class="container mt-5">
+                    <div class="alert alert-danger">
+                        <h4>Error Creating Dependency Graph</h4>
+                        <p>{str(e)}</p>
+                        <pre>{logging.traceback.format_exc()}</pre>
+                    </div>
+                </div>
+            </body>
+            </html>
+            """
+            with open(output_path, 'w', encoding='utf-8') as f:
+                f.write(error_html)
             raise
     
+    # Keep the rest of the methods unchanged
     def create_static_graph(self, output_path="dependency_graph.png"):
         """
         Create a static visualization of the dependency graph
