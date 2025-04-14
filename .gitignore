@@ -143,3 +143,4 @@ repo-analyzer
 test/
 output
 temp_repo/
+output/

@@ -1,0 +1,3121 @@
+def clone_repository(repo_url, target_dir="temp_repo"):
+    """
+    Clone a GitHub repository to the target directory.
+    
+    Args:
+        repo_url (str): URL of the GitHub repository
+        target_dir (str): Directory to clone the repository into
+        
+    Returns:
+        str: Path to the cloned repository
+    """
+    try:
+        # Clean up existing directory if it exists
+        if os.path.exists(target_dir):
+            logger.info(f"Removing existing directory: {target_dir}")
+            shutil.rmtree(target_dir)
+        
+        logger.info(f"Cloning repository from {repo_url} to {target_dir}")
+        Repo.clone_from(repo_url, target_dir)
+        logger.info("Repository cloned successfully")
+        return target_dir
+    
+    except GitCommandError as e:
+        logger.error(f"Error cloning repository: {e}")
+        raise
+    except Exception as e:
+        logger.error(f"Unexpected error: {e}")
+        raise
+
+---CODE_SEPARATOR---
+
+def list_files_by_extension(repo_dir, extensions):
+    """
+    List all files with the specified extensions in the repository.
+    
+    Args:
+        repo_dir (str): Path to the repository
+        extensions (list): List of file extensions to look for
+        
+    Returns:
+        dict: Dictionary mapping extensions to lists of file paths
+    """
+    result = {ext: [] for ext in extensions}
+    
+    for root, _, files in os.walk(repo_dir):
+        # Skip hidden directories like .git
+        if any(part.startswith(".") for part in root.split(os.sep)):
+            continue
+            
+        for file in files:
+            for ext in extensions:
+                if file.endswith(ext):
+                    result[ext].append(os.path.join(root, file))
+    
+    return result
+
+---CODE_SEPARATOR---
+
+def __init__(self):
+        """Initialize the CodeBERT analyzer"""
+        try:
+            logger.info("Initializing CodeBERT analyzer...")
+            self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+            logger.info(f"Using device: {self.device}")
+            
+            # Use the CodeBERT model from Microsoft
+            model_name = "microsoft/codebert-base"
+            self.tokenizer = RobertaTokenizer.from_pretrained(model_name)
+            self.model = RobertaForSequenceClassification.from_pretrained(model_name)
+            self.model.to(self.device)
+            
+            # For code summarization/understanding
+            self.nlp = pipeline('feature-extraction', model=model_name, tokenizer=model_name, device=0 if torch.cuda.is_available() else -1)
+            
+            logger.info("CodeBERT initialization complete")
+        except Exception as e:
+            logger.error(f"Error initializing CodeBERT: {e}")
+            raise
+    
+    def code_quality_score(self, code):
+        """
+        Calculate a code quality score for the given code snippet
+        
+        Args:
+            code (str): Source code to analyze
+            
+        Returns:
+            float: Quality score between 0 and 1
+        """
+        try:
+            # Use the model to get code representation
+            inputs = self.tokenizer(code, return_tensors="pt", truncation=True, max_length=512).to(self.device)
+            outputs = self.model(**inputs)
+            
+            # Use the embedding as a feature vector
+            embeddings = outputs.logits
+            
+            # Simple heuristic for code quality based on the embedding vector
+            quality_score = torch.sigmoid(torch.mean(embeddings)).item()
+            
+            return quality_score
+        except Exception as e:
+            logger.error(f"Error calculating code quality score: {e}")
+            return 0.5  # Return neutral score on error
+    
+    def suggest_improvements(self, code, file_ext):
+        """
+        Suggest improvements for the given code
+        
+        Args:
+            code (str): Source code to analyze
+            file_ext (str): File extension to determine the language
+            
+        Returns:
+            list: List of improvement suggestions
+        """
+        suggestions = []
+        
+        # Skip if the code is too long
+        if len(code) > 10000:
+            suggestions.append("Code is too large for detailed analysis. Consider breaking it into smaller modules.")
+            return suggestions
+        
+        # Skip if the code is empty
+        if not code.strip():
+            suggestions.append("Code file is empty or contains only whitespace.")
+            return suggestions
+        
+        try:
+            # Basic code analysis based on patterns
+            
+            # Check for long functions/methods
+            lines = code.split('\n')
+            function_start_patterns = {
+                '.py': ['def ', 'async def '],
+                '.js': ['function ', '=>', 'async function'],
+                '.jsx': ['function ', '=>', 'async function'],
+                '.ts': ['function ', '=>', 'async function'],
+                '.tsx': ['function ', '=>', 'async function']
+            }
+            
+            current_function_lines = 0
+            in_function = False
+            
+            for line in lines:
+                line = line.strip()
+                
+                # Check if line starts a function definition
+                for pattern in function_start_patterns.get(file_ext, []):
+                    if pattern in line:
+                        in_function = True
+                        current_function_lines = 0
+                
+                # Count lines in the function
+                if in_function:
+                    current_function_lines += 1
+                
+                # Check if line ends a function definition
+                if in_function and ('}' in line or line.startswith('return')):
+                    if current_function_lines > 50:
+                        suggestions.append(f"Consider breaking down large function with {current_function_lines} lines into smaller, more focused functions.")
+                    in_function = False
+            
+            # Check for hardcoded values
+            if file_ext in ['.py', '.js', '.jsx', '.ts', '.tsx']:
+                string_literal_count = len([line for line in lines if '"' in line or "'" in line])
+                if string_literal_count > 10:
+                    suggestions.append("Consider extracting hardcoded string literals into constants or configuration files.")
+            
+            # Check for deep nesting
+            indentation_levels = []
+            for line in lines:
+                if line.strip():  # Skip empty lines
+                    leading_spaces = len(line) - len(line.lstrip())
+                    indentation_levels.append(leading_spaces)
+            
+            if indentation_levels and max(indentation_levels) > 24:  # Assuming 4 spaces per level, this is 6 levels
+                suggestions.append("Deep nesting detected. Consider refactoring to reduce complexity and improve readability.")
+            
+            # Check for code duplication (simple approach)
+            cleaned_lines = [line.strip() for line in lines if line.strip() and not line.strip().startswith('#') and not line.strip().startswith('//')]
+            seen_patterns = {}
+            for i in range(len(cleaned_lines) - 3):
+                pattern = '\n'.join(cleaned_lines[i:i+3])
+                if pattern in seen_patterns:
+                    seen_patterns[pattern] += 1
+                else:
+                    seen_patterns[pattern] = 1
+            
+            duplicate_patterns = [pattern for pattern, count in seen_patterns.items() if count > 1]
+            if duplicate_patterns:
+                suggestions.append(f"Detected {len(duplicate_patterns)} potentially duplicated code patterns. Consider refactoring into reusable functions.")
+                
+            # Quality score-based suggestions
+            quality_score = self.code_quality_score(code)
+            if quality_score < 0.4:
+                suggestions.append("Overall code quality appears to be low. Consider refactoring using clean code principles.")
+            elif quality_score < 0.6:
+                suggestions.append("Code quality is average. Consider adding more documentation and improving naming conventions.")
+            
+            # Language-specific suggestions
+            if file_ext == '.py':
+                if 'import *' in code:
+                    suggestions.append("Avoid using 'import *' as it can lead to namespace pollution. Import only what you need.")
+                if 'except:' in code and 'except Exception:' not in code:
+                    suggestions.append("Avoid bare 'except:' clauses. Specify the exceptions you want to catch.")
+                if 'global ' in code:
+                    suggestions.append("Consider avoiding global variables as they can lead to maintainability issues.")
+            
+            elif file_ext in ['.js', '.jsx', '.ts', '.tsx']:
+                if 'var ' in code:
+                    suggestions.append("Consider using 'const' or 'let' instead of 'var' for better scoping behavior.")
+                if '==' in code and '===' not in code:
+                    suggestions.append("Consider using '===' instead of '==' for strict equality comparisons.")
+                if 'setTimeout(' in code and 'clearTimeout(' not in code:
+                    suggestions.append("Make sure to clear timeouts to prevent memory leaks, especially in React components.")
+            
+            return suggestions
+            
+        except Exception as e:
+            logger.error(f"Error suggesting improvements: {e}")
+            suggestions.append("Error analyzing code. Try again with a smaller code snippet.")
+            return suggestions
+    
+    def analyze_repository(self, repo_path, graph):
+        """
+        Analyze a repository using CodeBERT and the dependency graph
+        
+        Args:
+            repo_path (str): Path to the repository
+            graph (nx.DiGraph): Dependency graph
+            
+        Returns:
+            dict: Analysis results
+        """
+        results = {
+            "file_analysis": {},
+            "most_complex_files": [],
+            "overall_suggestions": []
+        }
+        
+        file_extensions = {
+            '.py': 'Python',
+            '.js': 'JavaScript',
+            '.jsx': 'React JSX',
+            '.ts': 'TypeScript',
+            '.tsx': 'React TypeScript'
+        }
+        
+        # Get all files that need analysis
+        files_to_analyze = []
+        for node in graph.nodes():
+            node_type = graph.nodes[node].get('type')
+            if node_type in ['python_file', 'js_file']:
+                file_path = os.path.join(repo_path, node)
+                if os.path.exists(file_path) and os.path.getsize(file_path) < 1000000:  # Skip files larger than 1MB
+                    _, ext = os.path.splitext(file_path)
+                    if ext in file_extensions:
+                        files_to_analyze.append((file_path, ext))
+        
+        logger.info(f"Analyzing {len(files_to_analyze)} files with CodeBERT...")
+        
+        # Track file complexity scores
+        complexity_scores = {}
+        
+        # Analyze each file
+        for file_path, ext in tqdm(files_to_analyze, desc="Analyzing files"):
+            try:
+                with open(file_path, 'r', encoding='utf-8', errors='ignore') as file:
+                    code = file.read()
+                
+                # Skip empty files
+                if not code.strip():
+                    continue
+                
+                # Calculate code quality score
+                quality_score = self.code_quality_score(code)
+                
+                # Get improvement suggestions
+                suggestions = self.suggest_improvements(code, ext)
+                
+                # Store the complexity score
+                complexity_scores[file_path] = 1.0 - quality_score  # Invert the quality score to get complexity
+                
+                # Calculate code metrics
+                loc = len(code.split('\n'))
+                comment_lines = len([line for line in code.split('\n') if line.strip().startswith('#') or line.strip().startswith('//')])
+                
+                # Store the analysis results
+                rel_path = os.path.relpath(file_path, repo_path)
+                results["file_analysis"][rel_path] = {
+                    "quality_score": quality_score,
+                    "language": file_extensions[ext],
+                    "lines_of_code": loc,
+                    "comment_lines": comment_lines,
+                    "comment_ratio": comment_lines / loc if loc > 0 else 0,
+                    "suggestions": suggestions
+                }
+                
+            except Exception as e:
+                logger.error(f"Error analyzing file {file_path}: {e}")
+        
+        # Get the most complex files
+        most_complex = sorted(complexity_scores.items(), key=lambda x: x[1], reverse=True)[:5]
+        results["most_complex_files"] = [os.path.relpath(file_path, repo_path) for file_path, _ in most_complex]
+        
+        # Generate overall suggestions
+        if results["file_analysis"]:
+            avg_quality = sum(file["quality_score"] for file in results["file_analysis"].values()) / len(results["file_analysis"])
+            avg_comment_ratio = sum(file["comment_ratio"] for file in results["file_analysis"].values()) / len(results["file_analysis"])
+            
+            if avg_quality < 0.5:
+                results["overall_suggestions"].append("The overall code quality appears to be below average. Consider implementing a code review process.")
+            
+            if avg_comment_ratio < 0.1:
+                results["overall_suggestions"].append("The codebase has a low comment ratio. Consider improving documentation to enhance maintainability.")
+            
+            # Check for consistent code style
+            quality_variance = sum((file["quality_score"] - avg_quality) ** 2 for file in results["file_analysis"].values())
+            if quality_variance > 0.05:
+                results["overall_suggestions"].append("Code quality varies significantly across files. Consider implementing coding standards and linters.")
+            
+        return results
+
+---CODE_SEPARATOR---
+
+class CodeBERTAnalyzer:
+    """Use CodeBERT to analyze code quality and suggest improvements"""
+    
+    def __init__(self):
+        """Initialize the CodeBERT analyzer"""
+        try:
+            logger.info("Initializing CodeBERT analyzer...")
+            self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+            logger.info(f"Using device: {self.device}")
+            
+            # Use the CodeBERT model from Microsoft
+            model_name = "microsoft/codebert-base"
+            self.tokenizer = RobertaTokenizer.from_pretrained(model_name)
+            self.model = RobertaForSequenceClassification.from_pretrained(model_name)
+            self.model.to(self.device)
+            
+            # For code summarization/understanding
+            self.nlp = pipeline('feature-extraction', model=model_name, tokenizer=model_name, device=0 if torch.cuda.is_available() else -1)
+            
+            logger.info("CodeBERT initialization complete")
+        except Exception as e:
+            logger.error(f"Error initializing CodeBERT: {e}")
+            raise
+    
+    def code_quality_score(self, code):
+        """
+        Calculate a code quality score for the given code snippet
+        
+        Args:
+            code (str): Source code to analyze
+            
+        Returns:
+            float: Quality score between 0 and 1
+        """
+        try:
+            # Use the model to get code representation
+            inputs = self.tokenizer(code, return_tensors="pt", truncation=True, max_length=512).to(self.device)
+            outputs = self.model(**inputs)
+            
+            # Use the embedding as a feature vector
+            embeddings = outputs.logits
+            
+            # Simple heuristic for code quality based on the embedding vector
+            quality_score = torch.sigmoid(torch.mean(embeddings)).item()
+            
+            return quality_score
+        except Exception as e:
+            logger.error(f"Error calculating code quality score: {e}")
+            return 0.5  # Return neutral score on error
+    
+    def suggest_improvements(self, code, file_ext):
+        """
+        Suggest improvements for the given code
+        
+        Args:
+            code (str): Source code to analyze
+            file_ext (str): File extension to determine the language
+            
+        Returns:
+            list: List of improvement suggestions
+        """
+        suggestions = []
+        
+        # Skip if the code is too long
+        if len(code) > 10000:
+            suggestions.append("Code is too large for detailed analysis. Consider breaking it into smaller modules.")
+            return suggestions
+        
+        # Skip if the code is empty
+        if not code.strip():
+            suggestions.append("Code file is empty or contains only whitespace.")
+            return suggestions
+        
+        try:
+            # Basic code analysis based on patterns
+            
+            # Check for long functions/methods
+            lines = code.split('\n')
+            function_start_patterns = {
+                '.py': ['def ', 'async def '],
+                '.js': ['function ', '=>', 'async function'],
+                '.jsx': ['function ', '=>', 'async function'],
+                '.ts': ['function ', '=>', 'async function'],
+                '.tsx': ['function ', '=>', 'async function']
+            }
+            
+            current_function_lines = 0
+            in_function = False
+            
+            for line in lines:
+                line = line.strip()
+                
+                # Check if line starts a function definition
+                for pattern in function_start_patterns.get(file_ext, []):
+                    if pattern in line:
+                        in_function = True
+                        current_function_lines = 0
+                
+                # Count lines in the function
+                if in_function:
+                    current_function_lines += 1
+                
+                # Check if line ends a function definition
+                if in_function and ('}' in line or line.startswith('return')):
+                    if current_function_lines > 50:
+                        suggestions.append(f"Consider breaking down large function with {current_function_lines} lines into smaller, more focused functions.")
+                    in_function = False
+            
+            # Check for hardcoded values
+            if file_ext in ['.py', '.js', '.jsx', '.ts', '.tsx']:
+                string_literal_count = len([line for line in lines if '"' in line or "'" in line])
+                if string_literal_count > 10:
+                    suggestions.append("Consider extracting hardcoded string literals into constants or configuration files.")
+            
+            # Check for deep nesting
+            indentation_levels = []
+            for line in lines:
+                if line.strip():  # Skip empty lines
+                    leading_spaces = len(line) - len(line.lstrip())
+                    indentation_levels.append(leading_spaces)
+            
+            if indentation_levels and max(indentation_levels) > 24:  # Assuming 4 spaces per level, this is 6 levels
+                suggestions.append("Deep nesting detected. Consider refactoring to reduce complexity and improve readability.")
+            
+            # Check for code duplication (simple approach)
+            cleaned_lines = [line.strip() for line in lines if line.strip() and not line.strip().startswith('#') and not line.strip().startswith('//')]
+            seen_patterns = {}
+            for i in range(len(cleaned_lines) - 3):
+                pattern = '\n'.join(cleaned_lines[i:i+3])
+                if pattern in seen_patterns:
+                    seen_patterns[pattern] += 1
+                else:
+                    seen_patterns[pattern] = 1
+            
+            duplicate_patterns = [pattern for pattern, count in seen_patterns.items() if count > 1]
+            if duplicate_patterns:
+                suggestions.append(f"Detected {len(duplicate_patterns)} potentially duplicated code patterns. Consider refactoring into reusable functions.")
+                
+            # Quality score-based suggestions
+            quality_score = self.code_quality_score(code)
+            if quality_score < 0.4:
+                suggestions.append("Overall code quality appears to be low. Consider refactoring using clean code principles.")
+            elif quality_score < 0.6:
+                suggestions.append("Code quality is average. Consider adding more documentation and improving naming conventions.")
+            
+            # Language-specific suggestions
+            if file_ext == '.py':
+                if 'import *' in code:
+                    suggestions.append("Avoid using 'import *' as it can lead to namespace pollution. Import only what you need.")
+                if 'except:' in code and 'except Exception:' not in code:
+                    suggestions.append("Avoid bare 'except:' clauses. Specify the exceptions you want to catch.")
+                if 'global ' in code:
+                    suggestions.append("Consider avoiding global variables as they can lead to maintainability issues.")
+            
+            elif file_ext in ['.js', '.jsx', '.ts', '.tsx']:
+                if 'var ' in code:
+                    suggestions.append("Consider using 'const' or 'let' instead of 'var' for better scoping behavior.")
+                if '==' in code and '===' not in code:
+                    suggestions.append("Consider using '===' instead of '==' for strict equality comparisons.")
+                if 'setTimeout(' in code and 'clearTimeout(' not in code:
+                    suggestions.append("Make sure to clear timeouts to prevent memory leaks, especially in React components.")
+            
+            return suggestions
+            
+        except Exception as e:
+            logger.error(f"Error suggesting improvements: {e}")
+            suggestions.append("Error analyzing code. Try again with a smaller code snippet.")
+            return suggestions
+    
+    def analyze_repository(self, repo_path, graph):
+        """
+        Analyze a repository using CodeBERT and the dependency graph
+        
+        Args:
+            repo_path (str): Path to the repository
+            graph (nx.DiGraph): Dependency graph
+            
+        Returns:
+            dict: Analysis results
+        """
+        results = {
+            "file_analysis": {},
+            "most_complex_files": [],
+            "overall_suggestions": []
+        }
+        
+        file_extensions = {
+            '.py': 'Python',
+            '.js': 'JavaScript',
+            '.jsx': 'React JSX',
+            '.ts': 'TypeScript',
+            '.tsx': 'React TypeScript'
+        }
+        
+        # Get all files that need analysis
+        files_to_analyze = []
+        for node in graph.nodes():
+            node_type = graph.nodes[node].get('type')
+            if node_type in ['python_file', 'js_file']:
+                file_path = os.path.join(repo_path, node)
+                if os.path.exists(file_path) and os.path.getsize(file_path) < 1000000:  # Skip files larger than 1MB
+                    _, ext = os.path.splitext(file_path)
+                    if ext in file_extensions:
+                        files_to_analyze.append((file_path, ext))
+        
+        logger.info(f"Analyzing {len(files_to_analyze)} files with CodeBERT...")
+        
+        # Track file complexity scores
+        complexity_scores = {}
+        
+        # Analyze each file
+        for file_path, ext in tqdm(files_to_analyze, desc="Analyzing files"):
+            try:
+                with open(file_path, 'r', encoding='utf-8', errors='ignore') as file:
+                    code = file.read()
+                
+                # Skip empty files
+                if not code.strip():
+                    continue
+                
+                # Calculate code quality score
+                quality_score = self.code_quality_score(code)
+                
+                # Get improvement suggestions
+                suggestions = self.suggest_improvements(code, ext)
+                
+                # Store the complexity score
+                complexity_scores[file_path] = 1.0 - quality_score  # Invert the quality score to get complexity
+                
+                # Calculate code metrics
+                loc = len(code.split('\n'))
+                comment_lines = len([line for line in code.split('\n') if line.strip().startswith('#') or line.strip().startswith('//')])
+                
+                # Store the analysis results
+                rel_path = os.path.relpath(file_path, repo_path)
+                results["file_analysis"][rel_path] = {
+                    "quality_score": quality_score,
+                    "language": file_extensions[ext],
+                    "lines_of_code": loc,
+                    "comment_lines": comment_lines,
+                    "comment_ratio": comment_lines / loc if loc > 0 else 0,
+                    "suggestions": suggestions
+                }
+                
+            except Exception as e:
+                logger.error(f"Error analyzing file {file_path}: {e}")
+        
+        # Get the most complex files
+        most_complex = sorted(complexity_scores.items(), key=lambda x: x[1], reverse=True)[:5]
+        results["most_complex_files"] = [os.path.relpath(file_path, repo_path) for file_path, _ in most_complex]
+        
+        # Generate overall suggestions
+        if results["file_analysis"]:
+            avg_quality = sum(file["quality_score"] for file in results["file_analysis"].values()) / len(results["file_analysis"])
+            avg_comment_ratio = sum(file["comment_ratio"] for file in results["file_analysis"].values()) / len(results["file_analysis"])
+            
+            if avg_quality < 0.5:
+                results["overall_suggestions"].append("The overall code quality appears to be below average. Consider implementing a code review process.")
+            
+            if avg_comment_ratio < 0.1:
+                results["overall_suggestions"].append("The codebase has a low comment ratio. Consider improving documentation to enhance maintainability.")
+            
+            # Check for consistent code style
+            quality_variance = sum((file["quality_score"] - avg_quality) ** 2 for file in results["file_analysis"].values())
+            if quality_variance > 0.05:
+                results["overall_suggestions"].append("Code quality varies significantly across files. Consider implementing coding standards and linters.")
+            
+        return results
+
+---CODE_SEPARATOR---
+
+def __init__(self, repo_path):
+        """
+        Initialize the parser with the repository path
+        
+        Args:
+            repo_path (str): Path to the cloned repository
+        """
+        self.repo_path = repo_path
+        
+    def parse_python_imports(self, file_path):
+        """
+        Extract Python import statements from a file
+        
+        Args:
+            file_path (str): Path to the Python file
+            
+        Returns:
+            list: List of imported modules
+        """
+        imports = []
+        try:
+            with open(file_path, 'r', encoding='utf-8') as file:
+                content = file.read()
+            
+            # Try parsing with ast first
+            try:
+                tree = ast.parse(content)
+                for node in ast.walk(tree):
+                    if isinstance(node, ast.Import):
+                        for name in node.names:
+                            imports.append(name.name)
+                    elif isinstance(node, ast.ImportFrom):
+                        if node.module:
+                            # Get the top-level module
+                            module = node.module.split('.')[0]
+                            imports.append(module)
+            except SyntaxError:
+                # Fallback to using astroid if ast fails
+                try:
+                    tree = astroid.parse(content)
+                    for node in tree.nodes_of_class((astroid.Import, astroid.ImportFrom)):
+                        if isinstance(node, astroid.Import):
+                            for name in node.names:
+                                imports.append(name[0])
+                        elif isinstance(node, astroid.ImportFrom):
+                            if node.modname:
+                                module = node.modname.split('.')[0]
+                                imports.append(module)
+                except Exception as e:
+                    logger.warning(f"Astroid parsing failed for {file_path}: {e}")
+                    # Use regex as last resort
+                    import_regex = r'^\s*(?:from|import)\s+([a-zA-Z0-9_\.]+)'
+                    for line in content.split('\n'):
+                        match = re.match(import_regex, line)
+                        if match:
+                            module = match.group(1).split('.')[0]
+                            imports.append(module)
+                            
+            return list(set(imports))  # Remove duplicates
+        except Exception as e:
+            logger.error(f"Error parsing Python imports from {file_path}: {e}")
+            return []
+    
+    def parse_js_imports(self, file_path):
+        """
+        Extract JavaScript import statements and require() calls from a file
+        
+        Args:
+            file_path (str): Path to the JavaScript file
+            
+        Returns:
+            list: List of imported modules
+        """
+        imports = []
+        try:
+            with open(file_path, 'r', encoding='utf-8') as file:
+                content = file.read()
+            
+            # Try parsing with esprima
+            try:
+                tree = esprima.parseModule(content)
+                
+                # Function to recursively extract imports from AST
+                def extract_imports(node):
+                    if node.type == 'ImportDeclaration':
+                        source = node.source.value
+                        imports.append(source)
+                    elif node.type == 'CallExpression' and node.callee.name == 'require':
+                        if node.arguments and node.arguments[0].type == 'Literal':
+                            imports.append(node.arguments[0].value)
+                    
+                    # Recursively check child nodes
+                    for key, value in node.items():
+                        if isinstance(value, dict) and 'type' in value:
+                            extract_imports(value)
+                        elif isinstance(value, list):
+                            for item in value:
+                                if isinstance(item, dict) and 'type' in item:
+                                    extract_imports(item)
+                
+                # Start extraction from the root node
+                extract_imports(tree.toDict())
+                
+            except Exception as e:
+                logger.warning(f"Esprima parsing failed for {file_path}: {e}")
+                # Use regex as fallback
+                # Match ES6 imports
+                es6_import_regex = r'import\s+(?:.*?\s+from\s+)?[\'"]([^\'"]*)[\'"]\s*;?'
+                imports.extend(re.findall(es6_import_regex, content))
+                
+                # Match require statements
+                require_regex = r'require\([\'"]([^\'"]*)[\'"]'
+                imports.extend(re.findall(require_regex, content))
+            
+            # Process the imports to clean them up
+            cleaned_imports = []
+            for imp in imports:
+                # Remove relative path indicators and get the package name
+                if imp.startswith('.'):
+                    continue  # Skip relative imports
+                
+                # For npm packages, get the main package name
+                if '/' in imp and not imp.startswith('@'):
+                    imp = imp.split('/')[0]
+                elif imp.startswith('@'):
+                    # Handle scoped packages like @angular/core
+                    parts = imp.split('/')
+                    if len(parts) > 1:
+                        imp = f"{parts[0]}/{parts[1]}"
+                
+                cleaned_imports.append(imp)
+                
+            return list(set(cleaned_imports))  # Remove duplicates
+            
+        except Exception as e:
+            logger.error(f"Error parsing JS imports from {file_path}: {e}")
+            return []
+    
+    def parse_package_json(self, file_path):
+        """
+        Extract dependencies from package.json file
+        
+        Args:
+            file_path (str): Path to the package.json file
+            
+        Returns:
+            dict: Dictionary of dependencies
+        """
+        try:
+            with open(file_path, 'r', encoding='utf-8') as file:
+                data = json.load(file)
+            
+            dependencies = {}
+            
+            # Extract dependencies
+            if 'dependencies' in data:
+                dependencies.update(data['dependencies'])
+            
+            # Extract devDependencies
+            if 'devDependencies' in data:
+                dependencies.update(data['devDependencies'])
+                
+            return dependencies
+            
+        except Exception as e:
+            logger.error(f"Error parsing package.json from {file_path}: {e}")
+            return {}
+    
+    def parse_requirements_txt(self, file_path):
+        """
+        Extract dependencies from requirements.txt file
+        
+        Args:
+            file_path (str): Path to the requirements.txt file
+            
+        Returns:
+            dict: Dictionary of dependencies
+        """
+        dependencies = {}
+        try:
+            with open(file_path, 'r', encoding='utf-8') as file:
+                for line in file:
+                    # Skip comments and empty lines
+                    line = line.strip()
+                    if not line or line.startswith('#'):
+                        continue
+                    
+                    # Handle GitHub URLs
+                    if 'git+' in line:
+                        parts = line.split('/')
+                        if len(parts) > 1:
+                            package = parts[-1].split('@')[0].split('.git')[0]
+                            dependencies[package] = 'git'
+                        continue
+                    
+                    # Regular requirements format
+                    # Split on common version specifiers
+                    for spec in ['==', '>=', '<=', '~=', '>', '<', '=']:
+                        if spec in line:
+                            package, version = line.split(spec, 1)
+                            dependencies[package.strip()] = version.strip()
+                            break
+                    else:
+                        # No version specifier found
+                        dependencies[line] = 'latest'
+                        
+            return dependencies
+            
+        except Exception as e:
+            logger.error(f"Error parsing requirements.txt from {file_path}: {e}")
+            return {}
+    
+    def extract_all_dependencies(self):
+        """
+        Extract all dependencies from the repository
+        
+        Returns:
+            dict: Dictionary with Python and JavaScript dependencies
+        """
+        dependencies = {
+            'python': {
+                'files': {},
+                'requirements': {}
+            },
+            'javascript': {
+                'files': {},
+                'package_json': {}
+            }
+        }
+        
+        # Find all Python files
+        for root, _, files in os.walk(self.repo_path):
+            # Skip hidden directories like .git
+            if any(part.startswith(".") for part in root.split(os.sep)):
+                continue
+                
+            for file in files:
+                file_path = os.path.join(root, file)
+                
+                # Process Python files
+                if file.endswith('.py'):
+                    imports = self.parse_python_imports(file_path)
+                    if imports:
+                        # Make path relative to repo
+                        rel_path = os.path.relpath(file_path, self.repo_path)
+                        dependencies['python']['files'][rel_path] = imports
+                
+                # Process JavaScript files
+                elif file.endswith(('.js', '.jsx', '.ts', '.tsx')):
+                    imports = self.parse_js_imports(file_path)
+                    if imports:
+                        # Make path relative to repo
+                        rel_path = os.path.relpath(file_path, self.repo_path)
+                        dependencies['javascript']['files'][rel_path] = imports
+                
+                # Process requirements.txt
+                elif file == 'requirements.txt':
+                    dependencies['python']['requirements'] = self.parse_requirements_txt(file_path)
+                
+                # Process package.json
+                elif file == 'package.json':
+                    dependencies['javascript']['package_json'] = self.parse_package_json(file_path)
+        
+        return dependencies
+
+---CODE_SEPARATOR---
+
+class DependencyParser:
+    """Class to parse dependencies from Python and JavaScript files"""
+    
+    def __init__(self, repo_path):
+        """
+        Initialize the parser with the repository path
+        
+        Args:
+            repo_path (str): Path to the cloned repository
+        """
+        self.repo_path = repo_path
+        
+    def parse_python_imports(self, file_path):
+        """
+        Extract Python import statements from a file
+        
+        Args:
+            file_path (str): Path to the Python file
+            
+        Returns:
+            list: List of imported modules
+        """
+        imports = []
+        try:
+            with open(file_path, 'r', encoding='utf-8') as file:
+                content = file.read()
+            
+            # Try parsing with ast first
+            try:
+                tree = ast.parse(content)
+                for node in ast.walk(tree):
+                    if isinstance(node, ast.Import):
+                        for name in node.names:
+                            imports.append(name.name)
+                    elif isinstance(node, ast.ImportFrom):
+                        if node.module:
+                            # Get the top-level module
+                            module = node.module.split('.')[0]
+                            imports.append(module)
+            except SyntaxError:
+                # Fallback to using astroid if ast fails
+                try:
+                    tree = astroid.parse(content)
+                    for node in tree.nodes_of_class((astroid.Import, astroid.ImportFrom)):
+                        if isinstance(node, astroid.Import):
+                            for name in node.names:
+                                imports.append(name[0])
+                        elif isinstance(node, astroid.ImportFrom):
+                            if node.modname:
+                                module = node.modname.split('.')[0]
+                                imports.append(module)
+                except Exception as e:
+                    logger.warning(f"Astroid parsing failed for {file_path}: {e}")
+                    # Use regex as last resort
+                    import_regex = r'^\s*(?:from|import)\s+([a-zA-Z0-9_\.]+)'
+                    for line in content.split('\n'):
+                        match = re.match(import_regex, line)
+                        if match:
+                            module = match.group(1).split('.')[0]
+                            imports.append(module)
+                            
+            return list(set(imports))  # Remove duplicates
+        except Exception as e:
+            logger.error(f"Error parsing Python imports from {file_path}: {e}")
+            return []
+    
+    def parse_js_imports(self, file_path):
+        """
+        Extract JavaScript import statements and require() calls from a file
+        
+        Args:
+            file_path (str): Path to the JavaScript file
+            
+        Returns:
+            list: List of imported modules
+        """
+        imports = []
+        try:
+            with open(file_path, 'r', encoding='utf-8') as file:
+                content = file.read()
+            
+            # Try parsing with esprima
+            try:
+                tree = esprima.parseModule(content)
+                
+                # Function to recursively extract imports from AST
+                def extract_imports(node):
+                    if node.type == 'ImportDeclaration':
+                        source = node.source.value
+                        imports.append(source)
+                    elif node.type == 'CallExpression' and node.callee.name == 'require':
+                        if node.arguments and node.arguments[0].type == 'Literal':
+                            imports.append(node.arguments[0].value)
+                    
+                    # Recursively check child nodes
+                    for key, value in node.items():
+                        if isinstance(value, dict) and 'type' in value:
+                            extract_imports(value)
+                        elif isinstance(value, list):
+                            for item in value:
+                                if isinstance(item, dict) and 'type' in item:
+                                    extract_imports(item)
+                
+                # Start extraction from the root node
+                extract_imports(tree.toDict())
+                
+            except Exception as e:
+                logger.warning(f"Esprima parsing failed for {file_path}: {e}")
+                # Use regex as fallback
+                # Match ES6 imports
+                es6_import_regex = r'import\s+(?:.*?\s+from\s+)?[\'"]([^\'"]*)[\'"]\s*;?'
+                imports.extend(re.findall(es6_import_regex, content))
+                
+                # Match require statements
+                require_regex = r'require\([\'"]([^\'"]*)[\'"]'
+                imports.extend(re.findall(require_regex, content))
+            
+            # Process the imports to clean them up
+            cleaned_imports = []
+            for imp in imports:
+                # Remove relative path indicators and get the package name
+                if imp.startswith('.'):
+                    continue  # Skip relative imports
+                
+                # For npm packages, get the main package name
+                if '/' in imp and not imp.startswith('@'):
+                    imp = imp.split('/')[0]
+                elif imp.startswith('@'):
+                    # Handle scoped packages like @angular/core
+                    parts = imp.split('/')
+                    if len(parts) > 1:
+                        imp = f"{parts[0]}/{parts[1]}"
+                
+                cleaned_imports.append(imp)
+                
+            return list(set(cleaned_imports))  # Remove duplicates
+            
+        except Exception as e:
+            logger.error(f"Error parsing JS imports from {file_path}: {e}")
+            return []
+    
+    def parse_package_json(self, file_path):
+        """
+        Extract dependencies from package.json file
+        
+        Args:
+            file_path (str): Path to the package.json file
+            
+        Returns:
+            dict: Dictionary of dependencies
+        """
+        try:
+            with open(file_path, 'r', encoding='utf-8') as file:
+                data = json.load(file)
+            
+            dependencies = {}
+            
+            # Extract dependencies
+            if 'dependencies' in data:
+                dependencies.update(data['dependencies'])
+            
+            # Extract devDependencies
+            if 'devDependencies' in data:
+                dependencies.update(data['devDependencies'])
+                
+            return dependencies
+            
+        except Exception as e:
+            logger.error(f"Error parsing package.json from {file_path}: {e}")
+            return {}
+    
+    def parse_requirements_txt(self, file_path):
+        """
+        Extract dependencies from requirements.txt file
+        
+        Args:
+            file_path (str): Path to the requirements.txt file
+            
+        Returns:
+            dict: Dictionary of dependencies
+        """
+        dependencies = {}
+        try:
+            with open(file_path, 'r', encoding='utf-8') as file:
+                for line in file:
+                    # Skip comments and empty lines
+                    line = line.strip()
+                    if not line or line.startswith('#'):
+                        continue
+                    
+                    # Handle GitHub URLs
+                    if 'git+' in line:
+                        parts = line.split('/')
+                        if len(parts) > 1:
+                            package = parts[-1].split('@')[0].split('.git')[0]
+                            dependencies[package] = 'git'
+                        continue
+                    
+                    # Regular requirements format
+                    # Split on common version specifiers
+                    for spec in ['==', '>=', '<=', '~=', '>', '<', '=']:
+                        if spec in line:
+                            package, version = line.split(spec, 1)
+                            dependencies[package.strip()] = version.strip()
+                            break
+                    else:
+                        # No version specifier found
+                        dependencies[line] = 'latest'
+                        
+            return dependencies
+            
+        except Exception as e:
+            logger.error(f"Error parsing requirements.txt from {file_path}: {e}")
+            return {}
+    
+    def extract_all_dependencies(self):
+        """
+        Extract all dependencies from the repository
+        
+        Returns:
+            dict: Dictionary with Python and JavaScript dependencies
+        """
+        dependencies = {
+            'python': {
+                'files': {},
+                'requirements': {}
+            },
+            'javascript': {
+                'files': {},
+                'package_json': {}
+            }
+        }
+        
+        # Find all Python files
+        for root, _, files in os.walk(self.repo_path):
+            # Skip hidden directories like .git
+            if any(part.startswith(".") for part in root.split(os.sep)):
+                continue
+                
+            for file in files:
+                file_path = os.path.join(root, file)
+                
+                # Process Python files
+                if file.endswith('.py'):
+                    imports = self.parse_python_imports(file_path)
+                    if imports:
+                        # Make path relative to repo
+                        rel_path = os.path.relpath(file_path, self.repo_path)
+                        dependencies['python']['files'][rel_path] = imports
+                
+                # Process JavaScript files
+                elif file.endswith(('.js', '.jsx', '.ts', '.tsx')):
+                    imports = self.parse_js_imports(file_path)
+                    if imports:
+                        # Make path relative to repo
+                        rel_path = os.path.relpath(file_path, self.repo_path)
+                        dependencies['javascript']['files'][rel_path] = imports
+                
+                # Process requirements.txt
+                elif file == 'requirements.txt':
+                    dependencies['python']['requirements'] = self.parse_requirements_txt(file_path)
+                
+                # Process package.json
+                elif file == 'package.json':
+                    dependencies['javascript']['package_json'] = self.parse_package_json(file_path)
+        
+        return dependencies
+
+---CODE_SEPARATOR---
+
+def __init__(self, dependencies):
+        """
+        Initialize with extracted dependencies
+        
+        Args:
+            dependencies (dict): The extracted dependencies from the parser
+        """
+        self.dependencies = dependencies
+        self.graph = nx.DiGraph()
+        
+    def build_graph(self):
+        """
+        Build the dependency graph
+        
+        Returns:
+            nx.DiGraph: Constructed NetworkX directed graph
+        """
+        logger.info("Building dependency graph...")
+        
+        # Process Python files
+        python_files = self.dependencies['python']['files']
+        for file_path, imports in python_files.items():
+            # Add node for the file
+            self.graph.add_node(file_path, 
+                               type='python_file', 
+                               label=file_path,
+                               title=f"Python: {file_path}")
+            
+            # Add edges to imported modules
+            for module in imports:
+                # Check if it's an internal module or a package
+                if module in python_files:
+                    # It's an internal module
+                    self.graph.add_edge(file_path, module, type='internal_import')
+                else:
+                    # It's an external package
+                    module_node = f"py_pkg:{module}"
+                    if not self.graph.has_node(module_node):
+                        version = self.dependencies['python']['requirements'].get(module, 'unknown')
+                        self.graph.add_node(module_node, 
+                                          type='python_package', 
+                                          label=module,
+                                          title=f"Python Package: {module} ({version})")
+                    
+                    self.graph.add_edge(file_path, module_node, type='external_import')
+        
+        # Process JavaScript files
+        js_files = self.dependencies['javascript']['files']
+        for file_path, imports in js_files.items():
+            # Add node for the file
+            self.graph.add_node(file_path, 
+                               type='js_file', 
+                               label=file_path,
+                               title=f"JavaScript: {file_path}")
+            
+            # Add edges to imported modules
+            for module in imports:
+                # Check if it's an internal module or a package
+                if module in js_files:
+                    # It's an internal module
+                    self.graph.add_edge(file_path, module, type='internal_import')
+                else:
+                    # It's an external package
+                    module_node = f"js_pkg:{module}"
+                    if not self.graph.has_node(module_node):
+                        version = self.dependencies['javascript']['package_json'].get(module, 'unknown')
+                        self.graph.add_node(module_node, 
+                                          type='js_package', 
+                                          label=module,
+                                          title=f"JS Package: {module} ({version})")
+                    
+                    self.graph.add_edge(file_path, module_node, type='external_import')
+        
+        # Add metadata to the graph
+        self.graph.graph['python_files'] = len(python_files)
+        self.graph.graph['js_files'] = len(js_files)
+        self.graph.graph['python_packages'] = len(self.dependencies['python']['requirements'])
+        self.graph.graph['js_packages'] = len(self.dependencies['javascript']['package_json'])
+        
+        logger.info(f"Graph built with {self.graph.number_of_nodes()} nodes and {self.graph.number_of_edges()} edges")
+        return self.graph
+    
+    def get_central_nodes(self, top_n=5):
+        """
+        Get the most central nodes in the graph based on different centrality measures
+        
+        Args:
+            top_n (int): Number of top nodes to return
+            
+        Returns:
+            dict: Dictionary with different centrality measures
+        """
+        if self.graph.number_of_nodes() == 0:
+            return {}
+        
+        centrality = {}
+        
+        # Degree centrality
+        try:
+            degree_centrality = nx.degree_centrality(self.graph)
+            centrality['degree'] = sorted(degree_centrality.items(), key=lambda x: x[1], reverse=True)[:top_n]
+        except Exception as e:
+            logger.warning(f"Error calculating degree centrality: {e}")
+        
+        # Betweenness centrality
+        try:
+            betweenness_centrality = nx.betweenness_centrality(self.graph)
+            centrality['betweenness'] = sorted(betweenness_centrality.items(), key=lambda x: x[1], reverse=True)[:top_n]
+        except Exception as e:
+            logger.warning(f"Error calculating betweenness centrality: {e}")
+        
+        # PageRank
+        try:
+            pagerank = nx.pagerank(self.graph)
+            centrality['pagerank'] = sorted(pagerank.items(), key=lambda x: x[1], reverse=True)[:top_n]
+        except Exception as e:
+            logger.warning(f"Error calculating PageRank: {e}")
+        
+        return centrality
+    
+    def identify_clusters(self):
+        """
+        Identify clusters in the graph using community detection
+        
+        Returns:
+            dict: Dictionary mapping nodes to their community
+        """
+        try:
+            # Create undirected copy of the graph for community detection
+            undirected_graph = self.graph.to_undirected()
+            
+            # Use Louvain method for community detection
+            try:
+                import community as community_louvain
+                partition = community_louvain.best_partition(undirected_graph)
+                return partition
+            except ImportError:
+                # Fallback to connected components
+                logger.warning("Community detection package not found, using connected components")
+                components = list(nx.connected_components(undirected_graph))
+                partition = {}
+                for i, component in enumerate(components):
+                    for node in component:
+                        partition[node] = i
+                return partition
+                
+        except Exception as e:
+            logger.warning(f"Error identifying clusters: {e}")
+            return {}
+    
+    def analyze_dependencies(self):
+        """
+        Perform analysis on the dependency graph
+        
+        Returns:
+            dict: Analysis results
+        """
+        if self.graph.number_of_nodes() == 0:
+            return {
+                "error": "Empty graph, no dependencies to analyze"
+            }
+        
+        analysis = {
+            "stats": {
+                "total_nodes": self.graph.number_of_nodes(),
+                "total_edges": self.graph.number_of_edges(),
+                "python_files": self.graph.graph.get('python_files', 0),
+                "js_files": self.graph.graph.get('js_files', 0),
+                "python_packages": self.graph.graph.get('python_packages', 0),
+                "js_packages": self.graph.graph.get('js_packages', 0),
+            },
+            "central_nodes": self.get_central_nodes(),
+            "clusters": len(set(self.identify_clusters().values())) if self.identify_clusters() else 0,
+            "density": nx.density(self.graph),
+            "avg_clustering": nx.average_clustering(self.graph.to_undirected()),
+            "recommendations": []
+        }
+        
+        # Generate recommendations based on the analysis
+        if analysis["density"] > 0.7:
+            analysis["recommendations"].append("High graph density suggests tight coupling. Consider modularizing the codebase.")
+        
+        if analysis["avg_clustering"] < 0.2:
+            analysis["recommendations"].append("Low clustering coefficient suggests poor code organization. Consider grouping related functionality.")
+        
+        # Check for dependency cycles
+        try:
+            cycles = list(nx.simple_cycles(self.graph))
+            if cycles:
+                analysis["recommendations"].append(f"Found {len(cycles)} circular dependencies. Consider refactoring to remove cycles.")
+                analysis["cycles"] = [cycle for cycle in cycles[:5]]  # Show up to 5 cycles
+        except Exception as e:
+            logger.warning(f"Error detecting cycles: {e}")
+        
+        # Get orphan nodes (files that don't import anything or aren't imported)
+        orphans = [node for node in self.graph.nodes() if self.graph.degree(node) == 0]
+        if orphans:
+            analysis["recommendations"].append(f"Found {len(orphans)} orphaned files that aren't connected to the dependency graph.")
+            analysis["orphans"] = orphans[:10]  # Show up to 10 orphans
+        
+        return analysis
+
+---CODE_SEPARATOR---
+
+class DependencyGraphBuilder:
+    """Build a dependency graph from parsed dependencies"""
+    
+    def __init__(self, dependencies):
+        """
+        Initialize with extracted dependencies
+        
+        Args:
+            dependencies (dict): The extracted dependencies from the parser
+        """
+        self.dependencies = dependencies
+        self.graph = nx.DiGraph()
+        
+    def build_graph(self):
+        """
+        Build the dependency graph
+        
+        Returns:
+            nx.DiGraph: Constructed NetworkX directed graph
+        """
+        logger.info("Building dependency graph...")
+        
+        # Process Python files
+        python_files = self.dependencies['python']['files']
+        for file_path, imports in python_files.items():
+            # Add node for the file
+            self.graph.add_node(file_path, 
+                               type='python_file', 
+                               label=file_path,
+                               title=f"Python: {file_path}")
+            
+            # Add edges to imported modules
+            for module in imports:
+                # Check if it's an internal module or a package
+                if module in python_files:
+                    # It's an internal module
+                    self.graph.add_edge(file_path, module, type='internal_import')
+                else:
+                    # It's an external package
+                    module_node = f"py_pkg:{module}"
+                    if not self.graph.has_node(module_node):
+                        version = self.dependencies['python']['requirements'].get(module, 'unknown')
+                        self.graph.add_node(module_node, 
+                                          type='python_package', 
+                                          label=module,
+                                          title=f"Python Package: {module} ({version})")
+                    
+                    self.graph.add_edge(file_path, module_node, type='external_import')
+        
+        # Process JavaScript files
+        js_files = self.dependencies['javascript']['files']
+        for file_path, imports in js_files.items():
+            # Add node for the file
+            self.graph.add_node(file_path, 
+                               type='js_file', 
+                               label=file_path,
+                               title=f"JavaScript: {file_path}")
+            
+            # Add edges to imported modules
+            for module in imports:
+                # Check if it's an internal module or a package
+                if module in js_files:
+                    # It's an internal module
+                    self.graph.add_edge(file_path, module, type='internal_import')
+                else:
+                    # It's an external package
+                    module_node = f"js_pkg:{module}"
+                    if not self.graph.has_node(module_node):
+                        version = self.dependencies['javascript']['package_json'].get(module, 'unknown')
+                        self.graph.add_node(module_node, 
+                                          type='js_package', 
+                                          label=module,
+                                          title=f"JS Package: {module} ({version})")
+                    
+                    self.graph.add_edge(file_path, module_node, type='external_import')
+        
+        # Add metadata to the graph
+        self.graph.graph['python_files'] = len(python_files)
+        self.graph.graph['js_files'] = len(js_files)
+        self.graph.graph['python_packages'] = len(self.dependencies['python']['requirements'])
+        self.graph.graph['js_packages'] = len(self.dependencies['javascript']['package_json'])
+        
+        logger.info(f"Graph built with {self.graph.number_of_nodes()} nodes and {self.graph.number_of_edges()} edges")
+        return self.graph
+    
+    def get_central_nodes(self, top_n=5):
+        """
+        Get the most central nodes in the graph based on different centrality measures
+        
+        Args:
+            top_n (int): Number of top nodes to return
+            
+        Returns:
+            dict: Dictionary with different centrality measures
+        """
+        if self.graph.number_of_nodes() == 0:
+            return {}
+        
+        centrality = {}
+        
+        # Degree centrality
+        try:
+            degree_centrality = nx.degree_centrality(self.graph)
+            centrality['degree'] = sorted(degree_centrality.items(), key=lambda x: x[1], reverse=True)[:top_n]
+        except Exception as e:
+            logger.warning(f"Error calculating degree centrality: {e}")
+        
+        # Betweenness centrality
+        try:
+            betweenness_centrality = nx.betweenness_centrality(self.graph)
+            centrality['betweenness'] = sorted(betweenness_centrality.items(), key=lambda x: x[1], reverse=True)[:top_n]
+        except Exception as e:
+            logger.warning(f"Error calculating betweenness centrality: {e}")
+        
+        # PageRank
+        try:
+            pagerank = nx.pagerank(self.graph)
+            centrality['pagerank'] = sorted(pagerank.items(), key=lambda x: x[1], reverse=True)[:top_n]
+        except Exception as e:
+            logger.warning(f"Error calculating PageRank: {e}")
+        
+        return centrality
+    
+    def identify_clusters(self):
+        """
+        Identify clusters in the graph using community detection
+        
+        Returns:
+            dict: Dictionary mapping nodes to their community
+        """
+        try:
+            # Create undirected copy of the graph for community detection
+            undirected_graph = self.graph.to_undirected()
+            
+            # Use Louvain method for community detection
+            try:
+                import community as community_louvain
+                partition = community_louvain.best_partition(undirected_graph)
+                return partition
+            except ImportError:
+                # Fallback to connected components
+                logger.warning("Community detection package not found, using connected components")
+                components = list(nx.connected_components(undirected_graph))
+                partition = {}
+                for i, component in enumerate(components):
+                    for node in component:
+                        partition[node] = i
+                return partition
+                
+        except Exception as e:
+            logger.warning(f"Error identifying clusters: {e}")
+            return {}
+    
+    def analyze_dependencies(self):
+        """
+        Perform analysis on the dependency graph
+        
+        Returns:
+            dict: Analysis results
+        """
+        if self.graph.number_of_nodes() == 0:
+            return {
+                "error": "Empty graph, no dependencies to analyze"
+            }
+        
+        analysis = {
+            "stats": {
+                "total_nodes": self.graph.number_of_nodes(),
+                "total_edges": self.graph.number_of_edges(),
+                "python_files": self.graph.graph.get('python_files', 0),
+                "js_files": self.graph.graph.get('js_files', 0),
+                "python_packages": self.graph.graph.get('python_packages', 0),
+                "js_packages": self.graph.graph.get('js_packages', 0),
+            },
+            "central_nodes": self.get_central_nodes(),
+            "clusters": len(set(self.identify_clusters().values())) if self.identify_clusters() else 0,
+            "density": nx.density(self.graph),
+            "avg_clustering": nx.average_clustering(self.graph.to_undirected()),
+            "recommendations": []
+        }
+        
+        # Generate recommendations based on the analysis
+        if analysis["density"] > 0.7:
+            analysis["recommendations"].append("High graph density suggests tight coupling. Consider modularizing the codebase.")
+        
+        if analysis["avg_clustering"] < 0.2:
+            analysis["recommendations"].append("Low clustering coefficient suggests poor code organization. Consider grouping related functionality.")
+        
+        # Check for dependency cycles
+        try:
+            cycles = list(nx.simple_cycles(self.graph))
+            if cycles:
+                analysis["recommendations"].append(f"Found {len(cycles)} circular dependencies. Consider refactoring to remove cycles.")
+                analysis["cycles"] = [cycle for cycle in cycles[:5]]  # Show up to 5 cycles
+        except Exception as e:
+            logger.warning(f"Error detecting cycles: {e}")
+        
+        # Get orphan nodes (files that don't import anything or aren't imported)
+        orphans = [node for node in self.graph.nodes() if self.graph.degree(node) == 0]
+        if orphans:
+            analysis["recommendations"].append(f"Found {len(orphans)} orphaned files that aren't connected to the dependency graph.")
+            analysis["orphans"] = orphans[:10]  # Show up to 10 orphans
+        
+        return analysis
+
+---CODE_SEPARATOR---
+
+def get_repo_name(repo_url):
+    """Extract repository name from URL"""
+    parsed_url = urlparse(repo_url)
+    path = parsed_url.path.strip('/')
+    return path.split('/')[-1].replace('.git', '')
+
+---CODE_SEPARATOR---
+
+def parse_args():
+    """Parse command line arguments"""
+    parser = argparse.ArgumentParser(
+        description='Analyze GitHub repository dependencies and suggest improvements'
+    )
+    parser.add_argument('repo_url', help='URL of the GitHub repository to analyze')
+    parser.add_argument('--output-dir', '-o', default='output', help='Directory to store the output files')
+    parser.add_argument('--tmp-dir', '-t', default='temp_repo', help='Temporary directory for cloning the repository')
+    parser.add_argument('--skip-codebert', action='store_true', help='Skip CodeBERT analysis (faster)')
+    parser.add_argument('--skip-visualization', action='store_true', help='Skip visualization generation')
+    parser.add_argument('--verbose', '-v', action='store_true', help='Show verbose output')
+    
+    return parser.parse_args()
+
+---CODE_SEPARATOR---
+
+def main():
+    """Main entry point of the application"""
+    start_time = time.time()
+    
+    # Parse command line arguments
+    args = parse_args()
+    
+    # Set log level based on verbosity
+    if args.verbose:
+        logging.getLogger().setLevel(logging.DEBUG)
+    
+    # Create output directory
+    os.makedirs(args.output_dir, exist_ok=True)
+    
+    try:
+        # Step 1: Clone the repository
+        logger.info(f"Step 1: Cloning repository from {args.repo_url}")
+        repo_dir = clone_repository(args.repo_url, args.tmp_dir)
+        repo_name = get_repo_name(args.repo_url)
+        logger.info(f"Repository '{repo_name}' cloned successfully")
+        
+        # Step 2: Parse dependencies
+        logger.info("Step 2: Parsing dependencies")
+        parser = DependencyParser(repo_dir)
+        dependencies = parser.extract_all_dependencies()
+        
+        # Save raw dependencies
+        with open(os.path.join(args.output_dir, 'dependencies.json'), 'w') as f:
+            json.dump(dependencies, f, indent=2)
+        
+        logger.info(f"Found {len(dependencies['python']['files'])} Python files and "
+                   f"{len(dependencies['javascript']['files'])} JavaScript files")
+        
+        # Step 3: Build dependency graph
+        logger.info("Step 3: Building dependency graph")
+        graph_builder = DependencyGraphBuilder(dependencies)
+        graph = graph_builder.build_graph()
+        
+        # Analyze graph
+        analysis_results = graph_builder.analyze_dependencies()
+        with open(os.path.join(args.output_dir, 'graph_analysis.json'), 'w') as f:
+            json.dump(analysis_results, f, indent=2)
+        
+        # Step 4: CodeBERT analysis
+        codebert_results = {}
+        if not args.skip_codebert:
+            logger.info("Step 4: Analyzing code quality with CodeBERT")
+            try:
+                analyzer = CodeBERTAnalyzer()
+                codebert_results = analyzer.analyze_repository(repo_dir, graph)
+                with open(os.path.join(args.output_dir, 'codebert_analysis.json'), 'w') as f:
+                    json.dump(codebert_results, f, indent=2)
+            except Exception as e:
+                logger.error(f"CodeBERT analysis failed: {e}")
+                logger.info("Continuing without CodeBERT analysis")
+        else:
+            logger.info("CodeBERT analysis skipped")
+        
+        # Step 5: Visualize results
+        if not args.skip_visualization:
+            logger.info("Step 5: Generating visualizations")
+            visualizer = DependencyVisualizer(graph, repo_name)
+            
+            # Create interactive HTML visualization
+            html_path = os.path.join(args.output_dir, 'dependency_graph.html')
+            visualizer.create_network_visualization(html_path)
+            
+            # Create static visualization
+            png_path = os.path.join(args.output_dir, 'dependency_graph.png')
+            visualizer.create_static_graph(png_path)
+            
+            # Export graph data
+            json_path = os.path.join(args.output_dir, 'graph_data.json')
+            visualizer.export_graph_data(json_path)
+        else:
+            logger.info("Visualization generation skipped")
+        
+        # Generate final report
+        generate_report(args.output_dir, repo_name, dependencies, analysis_results, codebert_results)
+        
+        # Cleanup
+        if os.path.exists(repo_dir) and repo_dir.startswith("temp_"):
+            import shutil
+            logger.info(f"Cleaning up temporary directory: {repo_dir}")
+            shutil.rmtree(repo_dir)
+        
+        elapsed_time = time.time() - start_time
+        logger.info(f"Analysis completed in {elapsed_time:.2f} seconds")
+        logger.info(f"Results saved to {os.path.abspath(args.output_dir)}")
+        
+        print("\n=== Repository Analysis Summary ===")
+        print(f"Repository: {repo_name}")
+        print(f"Python files: {graph.graph.get('python_files', 0)}")
+        print(f"JavaScript files: {graph.graph.get('js_files', 0)}")
+        print(f"Python packages: {graph.graph.get('python_packages', 0)}")
+        print(f"JavaScript packages: {graph.graph.get('js_packages', 0)}")
+        print(f"Total nodes in dependency graph: {graph.number_of_nodes()}")
+        print(f"Total edges in dependency graph: {graph.number_of_edges()}")
+        
+        if not args.skip_visualization:
+            print(f"\nHTML visualization: {os.path.abspath(html_path)}")
+        
+        print(f"\nFull report: {os.path.abspath(os.path.join(args.output_dir, 'report.md'))}")
+        
+    except Exception as e:
+        logger.error(f"Error during analysis: {e}", exc_info=True)
+        print(f"Error: {e}")
+        return 1
+    
+    return 0
+
+---CODE_SEPARATOR---
+
+def generate_report(output_dir, repo_name, dependencies, graph_analysis, codebert_results):
+    """Generate a Markdown report with the analysis results"""
+    report_path = os.path.join(output_dir, 'report.md')
+    
+    with open(report_path, 'w') as f:
+        f.write(f"# Repository Analysis Report: {repo_name}\n\n")
+        f.write(f"*Generated on: {time.strftime('%Y-%m-%d %H:%M:%S')}*\n\n")
+        
+        # Repository statistics
+        f.write("## Repository Statistics\n\n")
+        
+        # Python stats
+        py_files = len(dependencies['python']['files'])
+        py_packages = len(dependencies['python']['requirements'])
+        f.write(f"### Python\n")
+        f.write(f"- **Files:** {py_files}\n")
+        f.write(f"- **External Packages:** {py_packages}\n")
+        
+        if py_packages > 0:
+            f.write("\n**Top Python Dependencies:**\n\n")
+            f.write("| Package | Version |\n")
+            f.write("|---------|--------|\n")
+            
+            # Get the top dependencies
+            top_deps = list(dependencies['python']['requirements'].items())
+            for package, version in sorted(top_deps)[:10]:  # Show top 10
+                f.write(f"| {package} | {version} |\n")
+        
+        # JavaScript stats
+        js_files = len(dependencies['javascript']['files'])
+        js_packages = len(dependencies['javascript']['package_json'])
+        f.write(f"\n### JavaScript\n")
+        f.write(f"- **Files:** {js_files}\n")
+        f.write(f"- **External Packages:** {js_packages}\n")
+        
+        if js_packages > 0:
+            f.write("\n**Top JavaScript Dependencies:**\n\n")
+            f.write("| Package | Version |\n")
+            f.write("|---------|--------|\n")
+            
+            # Get the top dependencies
+            top_deps = list(dependencies['javascript']['package_json'].items())
+            for package, version in sorted(top_deps)[:10]:  # Show top 10
+                f.write(f"| {package} | {version} |\n")
+        
+        # Graph analysis
+        f.write("\n## Dependency Graph Analysis\n\n")
+        f.write(f"- **Total Nodes:** {graph_analysis['stats']['total_nodes']}\n")
+        f.write(f"- **Total Edges:** {graph_analysis['stats']['total_edges']}\n")
+        f.write(f"- **Graph Density:** {graph_analysis['density']:.4f}\n")
+        f.write(f"- **Average Clustering:** {graph_analysis['avg_clustering']:.4f}\n")
+        f.write(f"- **Number of Clusters:** {graph_analysis['clusters']}\n")
+        
+        # Central nodes
+        if 'central_nodes' in graph_analysis and graph_analysis['central_nodes']:
+            f.write("\n### Most Central Components\n\n")
+            
+            # Degree centrality
+            if 'degree' in graph_analysis['central_nodes']:
+                f.write("**Most Connected Components (Degree Centrality):**\n\n")
+                for node, centrality in graph_analysis['central_nodes']['degree']:
+                    f.write(f"- {node} ({centrality:.4f})\n")
+            
+            # PageRank
+            if 'pagerank' in graph_analysis['central_nodes']:
+                f.write("\n**Most Important Components (PageRank):**\n\n")
+                for node, centrality in graph_analysis['central_nodes']['pagerank']:
+                    f.write(f"- {node} ({centrality:.4f})\n")
+        
+        # Cycles
+        if 'cycles' in graph_analysis and graph_analysis['cycles']:
+            f.write("\n### Circular Dependencies\n\n")
+            f.write("The following circular dependencies were detected:\n\n")
+            for cycle in graph_analysis['cycles']:
+                f.write(f"- {' → '.join(cycle)} → {cycle[0]}\n")
+        
+        # Recommendations from graph analysis
+        if 'recommendations' in graph_analysis and graph_analysis['recommendations']:
+            f.write("\n### Graph Structure Recommendations\n\n")
+            for rec in graph_analysis['recommendations']:
+                f.write(f"- {rec}\n")
+        
+        # CodeBERT analysis
+        if codebert_results:
+            f.write("\n## Code Quality Analysis\n\n")
+            
+            # Most complex files
+            # Most complex files
+            if 'most_complex_files' in codebert_results and codebert_results['most_complex_files']:
+                f.write("### Most Complex Files\n\n")
+                for file in codebert_results['most_complex_files']:
+                    f.write(f"- `{file}`\n")
+            
+            # File quality overview
+            if 'file_analysis' in codebert_results and codebert_results['file_analysis']:
+                f.write("\n### Code Quality Metrics\n\n")
+                f.write("| File | Language | Lines | Comment Ratio | Quality Score |\n")
+                f.write("|------|----------|-------|---------------|---------------|\n")
+                
+                # Get top files sorted by quality score (ascending)
+                files_by_quality = sorted(
+                    codebert_results['file_analysis'].items(),
+                    key=lambda x: x[1]['quality_score']
+                )
+                
+                # Show top 10 worst and top 10 best files
+                for file, data in files_by_quality[:10]:  # 10 worst
+                    f.write(f"| `{file}` | {data['language']} | {data['lines_of_code']} | {data['comment_ratio']:.2f} | {data['quality_score']:.2f} |\n")
+                
+                f.write("\n...\n\n")
+                
+                for file, data in files_by_quality[-10:]:  # 10 best
+                    f.write(f"| `{file}` | {data['language']} | {data['lines_of_code']} | {data['comment_ratio']:.2f} | {data['quality_score']:.2f} |\n")
+            
+            # Overall suggestions
+            if 'overall_suggestions' in codebert_results and codebert_results['overall_suggestions']:
+                f.write("\n### Overall Code Quality Suggestions\n\n")
+                for suggestion in codebert_results['overall_suggestions']:
+                    f.write(f"- {suggestion}\n")
+            
+            # Sample file-specific suggestions
+            sample_count = 0
+            if 'file_analysis' in codebert_results:
+                f.write("\n### Sample File-Specific Suggestions\n\n")
+                for file, data in codebert_results['file_analysis'].items():
+                    if 'suggestions' in data and data['suggestions'] and sample_count < 5:
+                        f.write(f"**File: `{file}`**\n\n")
+                        for suggestion in data['suggestions'][:3]:  # Show top 3 suggestions per file
+                            f.write(f"- {suggestion}\n")
+                        f.write("\n")
+                        sample_count += 1
+        
+        # Conclusion
+        f.write("\n## Conclusion\n\n")
+        f.write("This report provides an overview of the repository structure, dependencies, and code quality. ")
+        f.write("Use the interactive visualization for a more detailed exploration of the dependency relationships.\n\n")
+        f.write("To improve the codebase, focus on addressing circular dependencies, refactoring complex files, and following the provided recommendations.")
+        
+        logger.info(f"Report generated at {report_path}")
+
+---CODE_SEPARATOR---
+
+def __init__(self, graph, repo_name):
+        """
+        Initialize the visualizer with a dependency graph
+        
+        Args:
+            graph (nx.DiGraph): NetworkX directed graph of dependencies
+            repo_name (str): Name of the repository for display purposes
+        """
+        self.graph = graph
+        self.repo_name = repo_name
+    
+    def create_network_visualization(self, output_path="dependency_graph.html"):
+        """
+        Create an interactive HTML visualization of the dependency graph
+        
+        Args:
+            output_path (str): Path to save the HTML file
+            
+        Returns:
+            str: Path to the saved HTML file
+        """
+        try:
+            logger.info("Creating interactive dependency graph visualization...")
+            
+            # Create a Pyvis network
+            net = Network(height="750px", width="100%", directed=True, notebook=False)
+            
+            # Configure physics and interaction
+            net.toggle_physics(True)
+            net.set_options("""
+            var options = {
+                "physics": {
+                    "barnesHut": {
+                        "gravitationalConstant": -2000,
+                        "centralGravity": 0.3,
+                        "springLength": 95,
+                        "springConstant": 0.04,
+                        "damping": 0.09,
+                        "avoidOverlap": 0.1
+                    },
+                    "minVelocity": 0.75
+                },
+                "layout": {
+                    "improvedLayout": false
+                },
+                "nodes": {
+                    "font": {
+                        "size": 12,
+                        "face": "Tahoma"
+                    }
+                },
+                "edges": {
+                    "color": {
+                        "inherit": true
+                    },
+                    "smooth": {
+                        "enabled": false
+                    }
+                },
+                "interaction": {
+                    "multiselect": true,
+                    "navigationButtons": true
+                }
+            }
+            """)
+            
+            # Define node colors based on type
+            node_colors = {
+                "python_file": "#3572A5",      # Python color
+                "js_file": "#F7DF1E",          # JavaScript color
+                "python_package": "#FFD43B",   # Lighter Python color
+                "js_package": "#F0DB4F"        # Lighter JavaScript color
+            }
+            
+            # Add nodes with appropriate colors and sizes
+            for node, attr in self.graph.nodes(data=True):
+                size = 15
+                if attr.get('type') in ['python_package', 'js_package']:
+                    size = 10
+                
+                # Adjust size based on node importance
+                if self.graph.degree(node) > 5:
+                    size += 5
+                
+                net.add_node(
+                    node, 
+                    label=attr.get('label', node), 
+                    title=attr.get('title', node),
+                    color=node_colors.get(attr.get('type'), "#CCCCCC"), 
+                    size=size
+                )
+            
+            # Add edges with appropriate styles
+            for source, target, attr in self.graph.edges(data=True):
+                color = "#cccccc"
+                if attr.get('type') == 'internal_import':
+                    color = "#007bff"  # Blue for internal imports
+                elif attr.get('type') == 'external_import':
+                    color = "#28a745"  # Green for external imports
+                
+                net.add_edge(source, target, color=color, arrows='to')
+            
+            # Add the graph metadata
+            metadata = {
+                "Repository": self.repo_name,
+                "Python Files": self.graph.graph.get('python_files', 0),
+                "JavaScript Files": self.graph.graph.get('js_files', 0),
+                "Python Packages": self.graph.graph.get('python_packages', 0),
+                "JavaScript Packages": self.graph.graph.get('js_packages', 0),
+                "Total Nodes": self.graph.number_of_nodes(),
+                "Total Edges": self.graph.number_of_edges()
+            }
+            
+            # Create a custom HTML template with metadata
+            html_template = f"""
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="utf-8">
+                <title>Dependency Graph: {self.repo_name}</title>
+                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+                <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
+                <link href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css" rel="stylesheet" type="text/css" />
+                <style>
+                    body {{
+                        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                        margin: 0;
+                        padding: 0;
+                    }}
+                    .container-fluid {{
+                        padding: 20px;
+                    }}
+                    .header {{
+                        background-color: #f8f9fa;
+                        padding: 20px;
+                        margin-bottom: 20px;
+                        border-bottom: 1px solid #e9ecef;
+                    }}
+                    .graph-container {{
+                        height: 750px;
+                        border: 1px solid #ddd;
+                        border-radius: 4px;
+                        overflow: hidden;
+                    }}
+                    .metadata {{
+                        background-color: #f8f9fa;
+                        padding: 15px;
+                        border-radius: 4px;
+                        margin-bottom: 20px;
+                    }}
+                    .legend {{
+                        margin-top: 20px;
+                        padding: 15px;
+                        background-color: #f8f9fa;
+                        border-radius: 4px;
+                    }}
+                    .legend-item {{
+                        display: flex;
+                        align-items: center;
+                        margin-bottom: 5px;
+                    }}
+                    .legend-color {{
+                        width: 15px;
+                        height: 15px;
+                        margin-right: 10px;
+                        border-radius: 3px;
+                    }}
+                </style>
+            </head>
+            <body>
+                <div class="container-fluid">
+                    <div class="header">
+                        <h1>Dependency Graph: {self.repo_name}</h1>
+                        <p>Interactive visualization of code dependencies</p>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="metadata">
+                                <h4>Repository Information</h4>
+                                <ul class="list-group">
+            """
+            
+            # Add metadata items
+            for key, value in metadata.items():
+                html_template += f'<li class="list-group-item d-flex justify-content-between align-items-center">{key} <span class="badge bg-primary rounded-pill">{value}</span></li>\n'
+            
+            # Add legend
+            html_template += """
+                                </ul>
+                            </div>
+                            
+                            <div class="legend">
+                                <h4>Legend</h4>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background-color: #3572A5;"></div>
+                                    <div>Python File</div>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background-color: #F7DF1E;"></div>
+                                    <div>JavaScript File</div>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background-color: #FFD43B;"></div>
+                                    <div>Python Package</div>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background-color: #F0DB4F;"></div>
+                                    <div>JavaScript Package</div>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background-color: #007bff;"></div>
+                                    <div>Internal Import</div>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background-color: #28a745;"></div>
+                                    <div>External Import</div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <h4>Tips</h4>
+                                <ul>
+                                    <li>Zoom in/out using mouse wheel</li>
+                                    <li>Click and drag to move around</li>
+                                    <li>Click on nodes to see details</li>
+                                    <li>Double-click to focus on a node</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-9">
+                            <div class="graph-container" id="mynetwork"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Import necessary scripts -->
+                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+            """
+            
+            # Save with custom HTML to get the basic graph structure
+            net.save_graph(output_path)
+            
+            # Read the generated HTML
+            with open(output_path, 'r', encoding='utf-8') as f:
+                pyvis_html = f.read()
+            
+            # Extract the vis.js specific parts (omitting pyvis's HTML structure)
+            script_start = pyvis_html.find('<script type="text/javascript">')
+            script_end = pyvis_html.find('</script>', script_start) + len('</script>')
+            vis_script = pyvis_html[script_start:script_end]
+            
+            # Fix the JavaScript by ensuring proper structure with try-catch block
+            vis_script_fixed = """
+            <script type="text/javascript">
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  // Check if the network container exists before proceeding
+                  var container = document.getElementById('mynetwork');
+                  if (!container) {
+                      console.error("Network container element not found!");
+                      return;
+                  }
+                  
+                  try {
+                      // Get a DOM element from the document
+                      container = document.getElementById('mynetwork');
+    
+                      // Load the data into vis DataSet
+                      nodes = new vis.DataSet(DATA_NODES_PLACEHOLDER);
+                      edges = new vis.DataSet(DATA_EDGES_PLACEHOLDER);
+                      
+                      nodeColors = {};
+                      allNodes = nodes.get({ returnType: "Object" });
+                      for (nodeId in allNodes) {
+                        nodeColors[nodeId] = allNodes[nodeId].color;
+                      }
+                      allEdges = edges.get({ returnType: "Object" });
+                      
+                      // adding nodes and edges to the graph
+                      data = {nodes: nodes, edges: edges};
+    
+                      var options = {
+                          "physics": {
+                              "barnesHut": {
+                                  "gravitationalConstant": -2000,
+                                  "centralGravity": 0.3,
+                                  "springLength": 95,
+                                  "springConstant": 0.04,
+                                  "damping": 0.09,
+                                  "avoidOverlap": 0.1
+                              },
+                              "minVelocity": 0.75
+                          },
+                          "layout": {
+                              "improvedLayout": false
+                          },
+                          "nodes": {
+                              "font": {
+                                  "size": 12,
+                                  "face": "Tahoma"
+                              }
+                          },
+                          "edges": {
+                              "color": {
+                                  "inherit": true
+                              },
+                              "smooth": {
+                                  "enabled": false
+                              }
+                          },
+                          "interaction": {
+                              "multiselect": true,
+                              "navigationButtons": true
+                          }
+                      };
+    
+                      // Initialize the network
+                      network = new vis.Network(container, data, options);
+                      
+                      return network;
+                  } catch (error) {
+                      console.error("Error in graph rendering:", error);
+                      if (container) {
+                          container.innerHTML = '<div class="alert alert-danger">Error rendering graph: ' + error.message + '</div>';
+                      }
+                      return null;
+                  }
+              }
+            </script>
+            """
+            
+            # Prepare the node and edge data for JavaScript
+            nodes_json = json.dumps([
+                {
+                    'id': node,
+                    'label': self.graph.nodes[node].get('label', node),
+                    'title': self.graph.nodes[node].get('title', node),
+                    'color': node_colors.get(self.graph.nodes[node].get('type'), "#CCCCCC"),
+                    'shape': 'dot',
+                    'size': 10 if self.graph.nodes[node].get('type') in ['python_package', 'js_package'] else 15
+                }
+                for node in self.graph.nodes()
+            ])
+            
+            edges_json = json.dumps([
+                {
+                    'from': source,
+                    'to': target,
+                    'color': {
+                        'color': "#007bff" if self.graph.edges[source, target].get('type') == 'internal_import'
+                              else "#28a745" if self.graph.edges[source, target].get('type') == 'external_import'
+                              else "#cccccc"
+                    },
+                    'arrows': 'to'
+                }
+                for source, target in self.graph.edges()
+            ])
+            
+            # Replace the placeholders with actual data
+            vis_script_fixed = vis_script_fixed.replace('DATA_NODES_PLACEHOLDER', nodes_json)
+            vis_script_fixed = vis_script_fixed.replace('DATA_EDGES_PLACEHOLDER', edges_json)
+            
+            # Complete the HTML template with the fixed script and add initialization
+            complete_html = html_template + vis_script_fixed + """
+            <script>
+                // Wait until DOM is fully loaded before initializing the network
+                document.addEventListener('DOMContentLoaded', function() {
+                    // Safe initialization of the graph
+                    try {
+                        drawGraph();
+                    } catch (error) {
+                        console.error("Error initializing graph:", error);
+                        var container = document.getElementById('mynetwork');
+                        if (container) {
+                            container.innerHTML = '<div class="alert alert-danger">Error loading graph. Please check console for details.</div>';
+                        }
+                    }
+                });
+            </script>
+            </body></html>"""
+            
+            # Save the final HTML
+            with open(output_path, 'w', encoding='utf-8') as f:
+                f.write(complete_html)
+            
+            logger.info(f"Interactive visualization saved to {output_path}")
+            return output_path
+            
+        except Exception as e:
+            logger.error(f"Error creating visualization: {e}")
+            # Create a simple error HTML if visualization fails
+            error_html = f"""
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="utf-8">
+                <title>Dependency Graph Error</title>
+                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+            </head>
+            <body>
+                <div class="container mt-5">
+                    <div class="alert alert-danger">
+                        <h4>Error Creating Dependency Graph</h4>
+                        <p>{str(e)}</p>
+                        <pre>{logging.traceback.format_exc()}</pre>
+                    </div>
+                </div>
+            </body>
+            </html>
+            """
+            with open(output_path, 'w', encoding='utf-8') as f:
+                f.write(error_html)
+            raise
+    
+    # Keep the rest of the methods unchanged
+    def create_static_graph(self, output_path="dependency_graph.png"):
+        """
+        Create a static visualization of the dependency graph
+        
+        Args:
+            output_path (str): Path to save the PNG file
+            
+        Returns:
+            str: Path to the saved PNG file
+        """
+        try:
+            logger.info("Creating static dependency graph visualization...")
+            
+            # Create a copy of the graph for visualization
+            viz_graph = self.graph.copy()
+            
+            # Get node types for coloring
+            node_colors = []
+            for node in viz_graph.nodes():
+                node_type = viz_graph.nodes[node].get('type')
+                if node_type == 'python_file':
+                    node_colors.append('#3572A5')  # Python blue
+                elif node_type == 'js_file':
+                    node_colors.append('#F7DF1E')  # JavaScript yellow
+                elif node_type == 'python_package':
+                    node_colors.append('#FFD43B')  # Python package color
+                elif node_type == 'js_package':
+                    node_colors.append('#F0DB4F')  # JS package color
+                else:
+                    node_colors.append('#CCCCCC')  # Default gray
+            
+            # Set up the matplotlib figure
+            plt.figure(figsize=(14, 10))
+            plt.title(f"Dependency Graph: {self.repo_name}", fontsize=16)
+            
+            # Use spring layout for graph positioning
+            if viz_graph.number_of_nodes() > 0:
+                try:
+                    pos = nx.spring_layout(viz_graph, k=0.15, iterations=50)
+                    
+                    # Draw the graph
+                    nx.draw_networkx_nodes(viz_graph, pos, node_size=300, node_color=node_colors, alpha=0.8)
+                    nx.draw_networkx_edges(viz_graph, pos, edge_color='#CCCCCC', arrows=True, alpha=0.5)
+                    
+                    # Draw labels only for important nodes (high degree or packages)
+                    labels = {}
+                    for node in viz_graph.nodes():
+                        if viz_graph.degree(node) > 3 or viz_graph.nodes[node].get('type') in ['python_package', 'js_package']:
+                            labels[node] = viz_graph.nodes[node].get('label', node)
+                    
+                    nx.draw_networkx_labels(viz_graph, pos, labels=labels, font_size=8)
+                    
+                    # Add a legend
+                    legend_elements = [
+                        plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='#3572A5', markersize=10, label='Python File'),
+                        plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='#F7DF1E', markersize=10, label='JavaScript File'),
+                        plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='#FFD43B', markersize=10, label='Python Package'),
+                        plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='#F0DB4F', markersize=10, label='JS Package')
+                    ]
+                    plt.legend(handles=legend_elements, loc='upper right')
+                    
+                    # Add metadata text
+                    plt.figtext(0.02, 0.02, f"Repository: {self.repo_name}\n"
+                               f"Files: Python: {self.graph.graph.get('python_files', 0)}, "
+                               f"JavaScript: {self.graph.graph.get('js_files', 0)}\n"
+                               f"Packages: Python: {self.graph.graph.get('python_packages', 0)}, "
+                               f"JavaScript: {self.graph.graph.get('js_packages', 0)}", 
+                               fontsize=10)
+                except Exception as layout_error:
+                    logger.warning(f"Error in graph layout: {layout_error}. Using random layout instead.")
+                    # Fallback to random layout if spring layout fails
+                    pos = nx.random_layout(viz_graph)
+                    nx.draw_networkx(viz_graph, pos, node_color=node_colors, 
+                                    edge_color='#CCCCCC', arrows=True, 
+                                    node_size=300, font_size=8, alpha=0.8)
+                    plt.text(0.5, 0.95, "Warning: Using random layout due to layout calculation error", 
+                            ha='center', va='center', fontsize=10, color='red',
+                            transform=plt.gca().transAxes)
+            else:
+                plt.text(0.5, 0.5, "No dependencies found", ha='center', va='center', fontsize=14)
+            
+            # Remove axes
+            plt.axis('off')
+            
+            # Save the figure
+            plt.savefig(output_path, dpi=150, bbox_inches='tight')
+            plt.close()
+            
+            logger.info(f"Static visualization saved to {output_path}")
+            return output_path
+            
+        except Exception as e:
+            logger.error(f"Error creating static visualization: {e}")
+            # Create a simple error image
+            try:
+                plt.figure(figsize=(8, 6))
+                plt.text(0.5, 0.5, f"Error creating visualization:\n{str(e)}", 
+                        ha='center', va='center', fontsize=12, color='red')
+                plt.axis('off')
+                plt.savefig(output_path, dpi=100)
+                plt.close()
+                logger.info(f"Error image saved to {output_path}")
+            except Exception as error_img_error:
+                logger.error(f"Could not create error image: {error_img_error}")
+            raise
+    
+    def export_graph_data(self, output_path="dependency_data.json"):
+        """
+        Export the graph data as JSON for external processing
+        
+        Args:
+            output_path (str): Path to save the JSON file
+            
+        Returns:
+            str: Path to the saved JSON file
+        """
+        try:
+            logger.info("Exporting graph data to JSON...")
+            
+            # Convert graph to a serializable format
+            data = {
+                "repo_name": self.repo_name,
+                "metadata": dict(self.graph.graph),
+                "nodes": [],
+                "edges": []
+            }
+            
+            # Add nodes
+            for node, attrs in self.graph.nodes(data=True):
+                node_data = {"id": node}
+                # Ensure all attributes are JSON serializable
+                serializable_attrs = {}
+                for key, value in attrs.items():
+                    try:
+                        # Test JSON serialization
+                        json.dumps({key: value})
+                        serializable_attrs[key] = value
+                    except (TypeError, OverflowError):
+                        # Convert non-serializable types to strings
+                        serializable_attrs[key] = str(value)
+                
+                node_data.update(serializable_attrs)
+                data["nodes"].append(node_data)
+            
+            # Add edges
+            for source, target, attrs in self.graph.edges(data=True):
+                edge_data = {"source": source, "target": target}
+                # Ensure all attributes are JSON serializable
+                serializable_attrs = {}
+                for key, value in attrs.items():
+                    try:
+                        # Test JSON serialization
+                        json.dumps({key: value})
+                        serializable_attrs[key] = value
+                    except (TypeError, OverflowError):
+                        # Convert non-serializable types to strings
+                        serializable_attrs[key] = str(value)
+                
+                edge_data.update(serializable_attrs)
+                data["edges"].append(edge_data)
+            
+            # Save to JSON
+            with open(output_path, 'w', encoding='utf-8') as f:
+                json.dump(data, f, indent=2)
+            
+            logger.info(f"Graph data exported to {output_path}")
+            return output_path
+            
+        except Exception as e:
+            logger.error(f"Error exporting graph data: {e}")
+            raise
+
+    def safe_remove_directory(self, directory):
+        """
+        Safely remove a directory, even if files are locked or in use
+        
+        Args:
+            directory (str): Path to the directory to remove
+        """
+        try:
+            import shutil
+            logger.info(f"Attempting to remove directory: {directory}")
+            shutil.rmtree(directory)
+            logger.info(f"Successfully removed directory: {directory}")
+        except PermissionError as e:
+            logger.warning(f"Permission error when removing {directory}: {e}")
+            try:
+                # Try using system commands as a fallback
+                import os
+                import platform
+                import time
+                
+                # Give time for any file handles to be released
+                time.sleep(1)
+                
+                if platform.system() == 'Windows':
+                    logger.info("Using Windows command to force directory removal")
+                    os.system(f'rd /s /q "{directory}"')
+                else:
+                    logger.info("Using Unix command to force directory removal")
+                    os.system(f'rm -rf "{directory}"')
+                
+                # Check if directory was removed
+                if not os.path.exists(directory):
+                    logger.info(f"Directory successfully removed using system command: {directory}")
+                else:
+                    logger.warning(f"Failed to remove directory: {directory}")
+            except Exception as inner_e:
+                logger.error(f"Failed to remove directory {directory} using alternative method: {inner_e}")
+        except Exception as e:
+            logger.error(f"Error removing directory {directory}: {e}")
+
+---CODE_SEPARATOR---
+
+class DependencyVisualizer:
+    """Visualize the dependency graph using NetworkX and Pyvis"""
+    
+    def __init__(self, graph, repo_name):
+        """
+        Initialize the visualizer with a dependency graph
+        
+        Args:
+            graph (nx.DiGraph): NetworkX directed graph of dependencies
+            repo_name (str): Name of the repository for display purposes
+        """
+        self.graph = graph
+        self.repo_name = repo_name
+    
+    def create_network_visualization(self, output_path="dependency_graph.html"):
+        """
+        Create an interactive HTML visualization of the dependency graph
+        
+        Args:
+            output_path (str): Path to save the HTML file
+            
+        Returns:
+            str: Path to the saved HTML file
+        """
+        try:
+            logger.info("Creating interactive dependency graph visualization...")
+            
+            # Create a Pyvis network
+            net = Network(height="750px", width="100%", directed=True, notebook=False)
+            
+            # Configure physics and interaction
+            net.toggle_physics(True)
+            net.set_options("""
+            var options = {
+                "physics": {
+                    "barnesHut": {
+                        "gravitationalConstant": -2000,
+                        "centralGravity": 0.3,
+                        "springLength": 95,
+                        "springConstant": 0.04,
+                        "damping": 0.09,
+                        "avoidOverlap": 0.1
+                    },
+                    "minVelocity": 0.75
+                },
+                "layout": {
+                    "improvedLayout": false
+                },
+                "nodes": {
+                    "font": {
+                        "size": 12,
+                        "face": "Tahoma"
+                    }
+                },
+                "edges": {
+                    "color": {
+                        "inherit": true
+                    },
+                    "smooth": {
+                        "enabled": false
+                    }
+                },
+                "interaction": {
+                    "multiselect": true,
+                    "navigationButtons": true
+                }
+            }
+            """)
+            
+            # Define node colors based on type
+            node_colors = {
+                "python_file": "#3572A5",      # Python color
+                "js_file": "#F7DF1E",          # JavaScript color
+                "python_package": "#FFD43B",   # Lighter Python color
+                "js_package": "#F0DB4F"        # Lighter JavaScript color
+            }
+            
+            # Add nodes with appropriate colors and sizes
+            for node, attr in self.graph.nodes(data=True):
+                size = 15
+                if attr.get('type') in ['python_package', 'js_package']:
+                    size = 10
+                
+                # Adjust size based on node importance
+                if self.graph.degree(node) > 5:
+                    size += 5
+                
+                net.add_node(
+                    node, 
+                    label=attr.get('label', node), 
+                    title=attr.get('title', node),
+                    color=node_colors.get(attr.get('type'), "#CCCCCC"), 
+                    size=size
+                )
+            
+            # Add edges with appropriate styles
+            for source, target, attr in self.graph.edges(data=True):
+                color = "#cccccc"
+                if attr.get('type') == 'internal_import':
+                    color = "#007bff"  # Blue for internal imports
+                elif attr.get('type') == 'external_import':
+                    color = "#28a745"  # Green for external imports
+                
+                net.add_edge(source, target, color=color, arrows='to')
+            
+            # Add the graph metadata
+            metadata = {
+                "Repository": self.repo_name,
+                "Python Files": self.graph.graph.get('python_files', 0),
+                "JavaScript Files": self.graph.graph.get('js_files', 0),
+                "Python Packages": self.graph.graph.get('python_packages', 0),
+                "JavaScript Packages": self.graph.graph.get('js_packages', 0),
+                "Total Nodes": self.graph.number_of_nodes(),
+                "Total Edges": self.graph.number_of_edges()
+            }
+            
+            # Create a custom HTML template with metadata
+            html_template = f"""
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="utf-8">
+                <title>Dependency Graph: {self.repo_name}</title>
+                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+                <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
+                <link href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css" rel="stylesheet" type="text/css" />
+                <style>
+                    body {{
+                        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                        margin: 0;
+                        padding: 0;
+                    }}
+                    .container-fluid {{
+                        padding: 20px;
+                    }}
+                    .header {{
+                        background-color: #f8f9fa;
+                        padding: 20px;
+                        margin-bottom: 20px;
+                        border-bottom: 1px solid #e9ecef;
+                    }}
+                    .graph-container {{
+                        height: 750px;
+                        border: 1px solid #ddd;
+                        border-radius: 4px;
+                        overflow: hidden;
+                    }}
+                    .metadata {{
+                        background-color: #f8f9fa;
+                        padding: 15px;
+                        border-radius: 4px;
+                        margin-bottom: 20px;
+                    }}
+                    .legend {{
+                        margin-top: 20px;
+                        padding: 15px;
+                        background-color: #f8f9fa;
+                        border-radius: 4px;
+                    }}
+                    .legend-item {{
+                        display: flex;
+                        align-items: center;
+                        margin-bottom: 5px;
+                    }}
+                    .legend-color {{
+                        width: 15px;
+                        height: 15px;
+                        margin-right: 10px;
+                        border-radius: 3px;
+                    }}
+                </style>
+            </head>
+            <body>
+                <div class="container-fluid">
+                    <div class="header">
+                        <h1>Dependency Graph: {self.repo_name}</h1>
+                        <p>Interactive visualization of code dependencies</p>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="metadata">
+                                <h4>Repository Information</h4>
+                                <ul class="list-group">
+            """
+            
+            # Add metadata items
+            for key, value in metadata.items():
+                html_template += f'<li class="list-group-item d-flex justify-content-between align-items-center">{key} <span class="badge bg-primary rounded-pill">{value}</span></li>\n'
+            
+            # Add legend
+            html_template += """
+                                </ul>
+                            </div>
+                            
+                            <div class="legend">
+                                <h4>Legend</h4>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background-color: #3572A5;"></div>
+                                    <div>Python File</div>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background-color: #F7DF1E;"></div>
+                                    <div>JavaScript File</div>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background-color: #FFD43B;"></div>
+                                    <div>Python Package</div>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background-color: #F0DB4F;"></div>
+                                    <div>JavaScript Package</div>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background-color: #007bff;"></div>
+                                    <div>Internal Import</div>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background-color: #28a745;"></div>
+                                    <div>External Import</div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <h4>Tips</h4>
+                                <ul>
+                                    <li>Zoom in/out using mouse wheel</li>
+                                    <li>Click and drag to move around</li>
+                                    <li>Click on nodes to see details</li>
+                                    <li>Double-click to focus on a node</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-9">
+                            <div class="graph-container" id="mynetwork"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Import necessary scripts -->
+                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+            """
+            
+            # Save with custom HTML to get the basic graph structure
+            net.save_graph(output_path)
+            
+            # Read the generated HTML
+            with open(output_path, 'r', encoding='utf-8') as f:
+                pyvis_html = f.read()
+            
+            # Extract the vis.js specific parts (omitting pyvis's HTML structure)
+            script_start = pyvis_html.find('<script type="text/javascript">')
+            script_end = pyvis_html.find('</script>', script_start) + len('</script>')
+            vis_script = pyvis_html[script_start:script_end]
+            
+            # Fix the JavaScript by ensuring proper structure with try-catch block
+            vis_script_fixed = """
+            <script type="text/javascript">
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  // Check if the network container exists before proceeding
+                  var container = document.getElementById('mynetwork');
+                  if (!container) {
+                      console.error("Network container element not found!");
+                      return;
+                  }
+                  
+                  try {
+                      // Get a DOM element from the document
+                      container = document.getElementById('mynetwork');
+    
+                      // Load the data into vis DataSet
+                      nodes = new vis.DataSet(DATA_NODES_PLACEHOLDER);
+                      edges = new vis.DataSet(DATA_EDGES_PLACEHOLDER);
+                      
+                      nodeColors = {};
+                      allNodes = nodes.get({ returnType: "Object" });
+                      for (nodeId in allNodes) {
+                        nodeColors[nodeId] = allNodes[nodeId].color;
+                      }
+                      allEdges = edges.get({ returnType: "Object" });
+                      
+                      // adding nodes and edges to the graph
+                      data = {nodes: nodes, edges: edges};
+    
+                      var options = {
+                          "physics": {
+                              "barnesHut": {
+                                  "gravitationalConstant": -2000,
+                                  "centralGravity": 0.3,
+                                  "springLength": 95,
+                                  "springConstant": 0.04,
+                                  "damping": 0.09,
+                                  "avoidOverlap": 0.1
+                              },
+                              "minVelocity": 0.75
+                          },
+                          "layout": {
+                              "improvedLayout": false
+                          },
+                          "nodes": {
+                              "font": {
+                                  "size": 12,
+                                  "face": "Tahoma"
+                              }
+                          },
+                          "edges": {
+                              "color": {
+                                  "inherit": true
+                              },
+                              "smooth": {
+                                  "enabled": false
+                              }
+                          },
+                          "interaction": {
+                              "multiselect": true,
+                              "navigationButtons": true
+                          }
+                      };
+    
+                      // Initialize the network
+                      network = new vis.Network(container, data, options);
+                      
+                      return network;
+                  } catch (error) {
+                      console.error("Error in graph rendering:", error);
+                      if (container) {
+                          container.innerHTML = '<div class="alert alert-danger">Error rendering graph: ' + error.message + '</div>';
+                      }
+                      return null;
+                  }
+              }
+            </script>
+            """
+            
+            # Prepare the node and edge data for JavaScript
+            nodes_json = json.dumps([
+                {
+                    'id': node,
+                    'label': self.graph.nodes[node].get('label', node),
+                    'title': self.graph.nodes[node].get('title', node),
+                    'color': node_colors.get(self.graph.nodes[node].get('type'), "#CCCCCC"),
+                    'shape': 'dot',
+                    'size': 10 if self.graph.nodes[node].get('type') in ['python_package', 'js_package'] else 15
+                }
+                for node in self.graph.nodes()
+            ])
+            
+            edges_json = json.dumps([
+                {
+                    'from': source,
+                    'to': target,
+                    'color': {
+                        'color': "#007bff" if self.graph.edges[source, target].get('type') == 'internal_import'
+                              else "#28a745" if self.graph.edges[source, target].get('type') == 'external_import'
+                              else "#cccccc"
+                    },
+                    'arrows': 'to'
+                }
+                for source, target in self.graph.edges()
+            ])
+            
+            # Replace the placeholders with actual data
+            vis_script_fixed = vis_script_fixed.replace('DATA_NODES_PLACEHOLDER', nodes_json)
+            vis_script_fixed = vis_script_fixed.replace('DATA_EDGES_PLACEHOLDER', edges_json)
+            
+            # Complete the HTML template with the fixed script and add initialization
+            complete_html = html_template + vis_script_fixed + """
+            <script>
+                // Wait until DOM is fully loaded before initializing the network
+                document.addEventListener('DOMContentLoaded', function() {
+                    // Safe initialization of the graph
+                    try {
+                        drawGraph();
+                    } catch (error) {
+                        console.error("Error initializing graph:", error);
+                        var container = document.getElementById('mynetwork');
+                        if (container) {
+                            container.innerHTML = '<div class="alert alert-danger">Error loading graph. Please check console for details.</div>';
+                        }
+                    }
+                });
+            </script>
+            </body></html>"""
+            
+            # Save the final HTML
+            with open(output_path, 'w', encoding='utf-8') as f:
+                f.write(complete_html)
+            
+            logger.info(f"Interactive visualization saved to {output_path}")
+            return output_path
+            
+        except Exception as e:
+            logger.error(f"Error creating visualization: {e}")
+            # Create a simple error HTML if visualization fails
+            error_html = f"""
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="utf-8">
+                <title>Dependency Graph Error</title>
+                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+            </head>
+            <body>
+                <div class="container mt-5">
+                    <div class="alert alert-danger">
+                        <h4>Error Creating Dependency Graph</h4>
+                        <p>{str(e)}</p>
+                        <pre>{logging.traceback.format_exc()}</pre>
+                    </div>
+                </div>
+            </body>
+            </html>
+            """
+            with open(output_path, 'w', encoding='utf-8') as f:
+                f.write(error_html)
+            raise
+    
+    # Keep the rest of the methods unchanged
+    def create_static_graph(self, output_path="dependency_graph.png"):
+        """
+        Create a static visualization of the dependency graph
+        
+        Args:
+            output_path (str): Path to save the PNG file
+            
+        Returns:
+            str: Path to the saved PNG file
+        """
+        try:
+            logger.info("Creating static dependency graph visualization...")
+            
+            # Create a copy of the graph for visualization
+            viz_graph = self.graph.copy()
+            
+            # Get node types for coloring
+            node_colors = []
+            for node in viz_graph.nodes():
+                node_type = viz_graph.nodes[node].get('type')
+                if node_type == 'python_file':
+                    node_colors.append('#3572A5')  # Python blue
+                elif node_type == 'js_file':
+                    node_colors.append('#F7DF1E')  # JavaScript yellow
+                elif node_type == 'python_package':
+                    node_colors.append('#FFD43B')  # Python package color
+                elif node_type == 'js_package':
+                    node_colors.append('#F0DB4F')  # JS package color
+                else:
+                    node_colors.append('#CCCCCC')  # Default gray
+            
+            # Set up the matplotlib figure
+            plt.figure(figsize=(14, 10))
+            plt.title(f"Dependency Graph: {self.repo_name}", fontsize=16)
+            
+            # Use spring layout for graph positioning
+            if viz_graph.number_of_nodes() > 0:
+                try:
+                    pos = nx.spring_layout(viz_graph, k=0.15, iterations=50)
+                    
+                    # Draw the graph
+                    nx.draw_networkx_nodes(viz_graph, pos, node_size=300, node_color=node_colors, alpha=0.8)
+                    nx.draw_networkx_edges(viz_graph, pos, edge_color='#CCCCCC', arrows=True, alpha=0.5)
+                    
+                    # Draw labels only for important nodes (high degree or packages)
+                    labels = {}
+                    for node in viz_graph.nodes():
+                        if viz_graph.degree(node) > 3 or viz_graph.nodes[node].get('type') in ['python_package', 'js_package']:
+                            labels[node] = viz_graph.nodes[node].get('label', node)
+                    
+                    nx.draw_networkx_labels(viz_graph, pos, labels=labels, font_size=8)
+                    
+                    # Add a legend
+                    legend_elements = [
+                        plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='#3572A5', markersize=10, label='Python File'),
+                        plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='#F7DF1E', markersize=10, label='JavaScript File'),
+                        plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='#FFD43B', markersize=10, label='Python Package'),
+                        plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='#F0DB4F', markersize=10, label='JS Package')
+                    ]
+                    plt.legend(handles=legend_elements, loc='upper right')
+                    
+                    # Add metadata text
+                    plt.figtext(0.02, 0.02, f"Repository: {self.repo_name}\n"
+                               f"Files: Python: {self.graph.graph.get('python_files', 0)}, "
+                               f"JavaScript: {self.graph.graph.get('js_files', 0)}\n"
+                               f"Packages: Python: {self.graph.graph.get('python_packages', 0)}, "
+                               f"JavaScript: {self.graph.graph.get('js_packages', 0)}", 
+                               fontsize=10)
+                except Exception as layout_error:
+                    logger.warning(f"Error in graph layout: {layout_error}. Using random layout instead.")
+                    # Fallback to random layout if spring layout fails
+                    pos = nx.random_layout(viz_graph)
+                    nx.draw_networkx(viz_graph, pos, node_color=node_colors, 
+                                    edge_color='#CCCCCC', arrows=True, 
+                                    node_size=300, font_size=8, alpha=0.8)
+                    plt.text(0.5, 0.95, "Warning: Using random layout due to layout calculation error", 
+                            ha='center', va='center', fontsize=10, color='red',
+                            transform=plt.gca().transAxes)
+            else:
+                plt.text(0.5, 0.5, "No dependencies found", ha='center', va='center', fontsize=14)
+            
+            # Remove axes
+            plt.axis('off')
+            
+            # Save the figure
+            plt.savefig(output_path, dpi=150, bbox_inches='tight')
+            plt.close()
+            
+            logger.info(f"Static visualization saved to {output_path}")
+            return output_path
+            
+        except Exception as e:
+            logger.error(f"Error creating static visualization: {e}")
+            # Create a simple error image
+            try:
+                plt.figure(figsize=(8, 6))
+                plt.text(0.5, 0.5, f"Error creating visualization:\n{str(e)}", 
+                        ha='center', va='center', fontsize=12, color='red')
+                plt.axis('off')
+                plt.savefig(output_path, dpi=100)
+                plt.close()
+                logger.info(f"Error image saved to {output_path}")
+            except Exception as error_img_error:
+                logger.error(f"Could not create error image: {error_img_error}")
+            raise
+    
+    def export_graph_data(self, output_path="dependency_data.json"):
+        """
+        Export the graph data as JSON for external processing
+        
+        Args:
+            output_path (str): Path to save the JSON file
+            
+        Returns:
+            str: Path to the saved JSON file
+        """
+        try:
+            logger.info("Exporting graph data to JSON...")
+            
+            # Convert graph to a serializable format
+            data = {
+                "repo_name": self.repo_name,
+                "metadata": dict(self.graph.graph),
+                "nodes": [],
+                "edges": []
+            }
+            
+            # Add nodes
+            for node, attrs in self.graph.nodes(data=True):
+                node_data = {"id": node}
+                # Ensure all attributes are JSON serializable
+                serializable_attrs = {}
+                for key, value in attrs.items():
+                    try:
+                        # Test JSON serialization
+                        json.dumps({key: value})
+                        serializable_attrs[key] = value
+                    except (TypeError, OverflowError):
+                        # Convert non-serializable types to strings
+                        serializable_attrs[key] = str(value)
+                
+                node_data.update(serializable_attrs)
+                data["nodes"].append(node_data)
+            
+            # Add edges
+            for source, target, attrs in self.graph.edges(data=True):
+                edge_data = {"source": source, "target": target}
+                # Ensure all attributes are JSON serializable
+                serializable_attrs = {}
+                for key, value in attrs.items():
+                    try:
+                        # Test JSON serialization
+                        json.dumps({key: value})
+                        serializable_attrs[key] = value
+                    except (TypeError, OverflowError):
+                        # Convert non-serializable types to strings
+                        serializable_attrs[key] = str(value)
+                
+                edge_data.update(serializable_attrs)
+                data["edges"].append(edge_data)
+            
+            # Save to JSON
+            with open(output_path, 'w', encoding='utf-8') as f:
+                json.dump(data, f, indent=2)
+            
+            logger.info(f"Graph data exported to {output_path}")
+            return output_path
+            
+        except Exception as e:
+            logger.error(f"Error exporting graph data: {e}")
+            raise
+
+    def safe_remove_directory(self, directory):
+        """
+        Safely remove a directory, even if files are locked or in use
+        
+        Args:
+            directory (str): Path to the directory to remove
+        """
+        try:
+            import shutil
+            logger.info(f"Attempting to remove directory: {directory}")
+            shutil.rmtree(directory)
+            logger.info(f"Successfully removed directory: {directory}")
+        except PermissionError as e:
+            logger.warning(f"Permission error when removing {directory}: {e}")
+            try:
+                # Try using system commands as a fallback
+                import os
+                import platform
+                import time
+                
+                # Give time for any file handles to be released
+                time.sleep(1)
+                
+                if platform.system() == 'Windows':
+                    logger.info("Using Windows command to force directory removal")
+                    os.system(f'rd /s /q "{directory}"')
+                else:
+                    logger.info("Using Unix command to force directory removal")
+                    os.system(f'rm -rf "{directory}"')
+                
+                # Check if directory was removed
+                if not os.path.exists(directory):
+                    logger.info(f"Directory successfully removed using system command: {directory}")
+                else:
+                    logger.warning(f"Failed to remove directory: {directory}")
+            except Exception as inner_e:
+                logger.error(f"Failed to remove directory {directory} using alternative method: {inner_e}")
+        except Exception as e:
+            logger.error(f"Error removing directory {directory}: {e}")
+
+---CODE_SEPARATOR---
+

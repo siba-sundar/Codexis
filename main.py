@@ -8,11 +8,11 @@ import json
 from urllib.parse import urlparse
 
 # Import local modules
-from clone import clone_repository, list_files_by_extension
-from dependency_parser import DependencyParser
-from graph_builder import DependencyGraphBuilder
-from codebert_analyzer import CodeBERTAnalyzer
-from visualizer import DependencyVisualizer
+from src.clone import clone_repository, list_files_by_extension
+from src.dependency_parser import DependencyParser
+from src.graph_builder import DependencyGraphBuilder
+from src.codebert_analyzer import CodeBERTAnalyzer
+from src.visualizer import DependencyVisualizer
 
 # Configure logging
 logging.basicConfig(
@@ -26,13 +26,13 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 def get_repo_name(repo_url):
-    """Extract repository name from URL"""
+   
     parsed_url = urlparse(repo_url)
     path = parsed_url.path.strip('/')
     return path.split('/')[-1].replace('.git', '')
 
 def parse_args():
-    """Parse command line arguments"""
+   
     parser = argparse.ArgumentParser(
         description='Analyze GitHub repository dependencies and suggest improvements'
     )
@@ -46,7 +46,7 @@ def parse_args():
     return parser.parse_args()
 
 def main():
-    """Main entry point of the application"""
+   
     start_time = time.time()
     
     # Parse command line arguments
@@ -157,7 +157,7 @@ def main():
     return 0
 
 def generate_report(output_dir, repo_name, dependencies, graph_analysis, codebert_results):
-    """Generate a Markdown report with the analysis results"""
+    
     report_path = os.path.join(output_dir, 'report.md')
     
     with open(report_path, 'w') as f:
