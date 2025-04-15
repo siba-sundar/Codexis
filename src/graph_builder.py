@@ -25,14 +25,14 @@ class DependencyGraphBuilder:
                                label=file_path,
                                title=f"Python: {file_path}")
             
-            # Add edges to imported modules
+           
             for module in imports:
-                # Check if it's an internal module or a package
+               
                 if module in python_files:
-                    # It's an internal module
+                 
                     self.graph.add_edge(file_path, module, type='internal_import')
                 else:
-                    # It's an external package
+                   
                     module_node = f"py_pkg:{module}"
                     if not self.graph.has_node(module_node):
                         version = self.dependencies['python']['requirements'].get(module, 'unknown')
@@ -43,23 +43,23 @@ class DependencyGraphBuilder:
                     
                     self.graph.add_edge(file_path, module_node, type='external_import')
         
-        # Process JavaScript files
+        
         js_files = self.dependencies['javascript']['files']
         for file_path, imports in js_files.items():
-            # Add node for the file
+           
             self.graph.add_node(file_path, 
                                type='js_file', 
                                label=file_path,
                                title=f"JavaScript: {file_path}")
             
-            # Add edges to imported modules
+           
             for module in imports:
-                # Check if it's an internal module or a package
+              
                 if module in js_files:
-                    # It's an internal module
+                    
                     self.graph.add_edge(file_path, module, type='internal_import')
                 else:
-                    # It's an external package
+                    
                     module_node = f"js_pkg:{module}"
                     if not self.graph.has_node(module_node):
                         version = self.dependencies['javascript']['package_json'].get(module, 'unknown')
@@ -70,7 +70,7 @@ class DependencyGraphBuilder:
                     
                     self.graph.add_edge(file_path, module_node, type='external_import')
         
-        # Add metadata to the graph
+     
         self.graph.graph['python_files'] = len(python_files)
         self.graph.graph['js_files'] = len(js_files)
         self.graph.graph['python_packages'] = len(self.dependencies['python']['requirements'])
@@ -86,21 +86,21 @@ class DependencyGraphBuilder:
         
         centrality = {}
         
-        # Degree centrality
+       
         try:
             degree_centrality = nx.degree_centrality(self.graph)
             centrality['degree'] = sorted(degree_centrality.items(), key=lambda x: x[1], reverse=True)[:top_n]
         except Exception as e:
             logger.warning(f"Error calculating degree centrality: {e}")
         
-        # Betweenness centrality
+      
         try:
             betweenness_centrality = nx.betweenness_centrality(self.graph)
             centrality['betweenness'] = sorted(betweenness_centrality.items(), key=lambda x: x[1], reverse=True)[:top_n]
         except Exception as e:
             logger.warning(f"Error calculating betweenness centrality: {e}")
         
-        # PageRank
+        
         try:
             pagerank = nx.pagerank(self.graph)
             centrality['pagerank'] = sorted(pagerank.items(), key=lambda x: x[1], reverse=True)[:top_n]
@@ -112,16 +112,16 @@ class DependencyGraphBuilder:
     def identify_clusters(self):
         
         try:
-            # Create undirected copy of the graph for community detection
+            
             undirected_graph = self.graph.to_undirected()
             
-            # Use Louvain method for community detection
+          
             try:
                 import community as community_louvain
                 partition = community_louvain.best_partition(undirected_graph)
                 return partition
             except ImportError:
-                # Fallback to connected components
+                
                 logger.warning("Community detection package not found, using connected components")
                 components = list(nx.connected_components(undirected_graph))
                 partition = {}
@@ -157,14 +157,14 @@ class DependencyGraphBuilder:
             "recommendations": []
         }
         
-        # Generate recommendations based on the analysis
+        
         if analysis["density"] > 0.7:
             analysis["recommendations"].append("High graph density suggests tight coupling. Consider modularizing the codebase.")
         
         if analysis["avg_clustering"] < 0.2:
             analysis["recommendations"].append("Low clustering coefficient suggests poor code organization. Consider grouping related functionality.")
         
-        # Check for dependency cycles
+       
         try:
             cycles = list(nx.simple_cycles(self.graph))
             if cycles:

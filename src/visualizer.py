@@ -63,21 +63,21 @@ class DependencyVisualizer:
             }
             """)
             
-            # Define node colors based on type
+            
             node_colors = {
-                "python_file": "#3572A5",      # Python color
-                "js_file": "#F7DF1E",          # JavaScript color
-                "python_package": "#FFD43B",   # Lighter Python color
-                "js_package": "#F0DB4F"        # Lighter JavaScript color
+                "python_file": "#3572A5",      
+                "js_file": "#F7DF1E",          
+                "python_package": "#FFD43B",  
+                "js_package": "#F0DB4F"       
             }
             
-            # Add nodes with appropriate colors and sizes
+            
             for node, attr in self.graph.nodes(data=True):
                 size = 15
                 if attr.get('type') in ['python_package', 'js_package']:
                     size = 10
                 
-                # Adjust size based on node importance
+                
                 if self.graph.degree(node) > 5:
                     size += 5
                 
@@ -89,7 +89,7 @@ class DependencyVisualizer:
                     size=size
                 )
             
-            # Add edges with appropriate styles
+           
             for source, target, attr in self.graph.edges(data=True):
                 color = "#cccccc"
                 if attr.get('type') == 'internal_import':
@@ -110,7 +110,7 @@ class DependencyVisualizer:
                 "Total Edges": self.graph.number_of_edges()
             }
             
-            # Create a custom HTML template with metadata
+          
             html_template = f"""
             <!DOCTYPE html>
             <html>
@@ -180,11 +180,11 @@ class DependencyVisualizer:
                                 <ul class="list-group">
             """
             
-            # Add metadata items
+            
             for key, value in metadata.items():
                 html_template += f'<li class="list-group-item d-flex justify-content-between align-items-center">{key} <span class="badge bg-primary rounded-pill">{value}</span></li>\n'
             
-            # Add legend
+          
             html_template += """
                                 </ul>
                             </div>
@@ -238,19 +238,19 @@ class DependencyVisualizer:
                 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
             """
             
-            # Save with custom HTML to get the basic graph structure
+           
             net.save_graph(output_path)
             
-            # Read the generated HTML
+            
             with open(output_path, 'r', encoding='utf-8') as f:
                 pyvis_html = f.read()
             
-            # Extract the vis.js specific parts (omitting pyvis's HTML structure)
+         
             script_start = pyvis_html.find('<script type="text/javascript">')
             script_end = pyvis_html.find('</script>', script_start) + len('</script>')
             vis_script = pyvis_html[script_start:script_end]
             
-            # Fix the JavaScript by ensuring proper structure with try-catch block
+           
             vis_script_fixed = """
             <script type="text/javascript">
               // initialize global variables.
@@ -346,7 +346,7 @@ class DependencyVisualizer:
             </script>
             """
             
-            # Prepare the node and edge data for JavaScript
+           
             nodes_json = json.dumps([
                 {
                     'id': node,
@@ -373,11 +373,11 @@ class DependencyVisualizer:
                 for source, target in self.graph.edges()
             ])
             
-            # Replace the placeholders with actual data
+            
             vis_script_fixed = vis_script_fixed.replace('DATA_NODES_PLACEHOLDER', nodes_json)
             vis_script_fixed = vis_script_fixed.replace('DATA_EDGES_PLACEHOLDER', edges_json)
             
-            # Complete the HTML template with the fixed script and add initialization
+         
             complete_html = html_template + vis_script_fixed + """
             <script>
                 // Wait until DOM is fully loaded before initializing the network
@@ -396,7 +396,7 @@ class DependencyVisualizer:
             </script>
             </body></html>"""
             
-            # Save the final HTML
+           
             with open(output_path, 'w', encoding='utf-8') as f:
                 f.write(complete_html)
             
@@ -405,7 +405,7 @@ class DependencyVisualizer:
             
         except Exception as e:
             logger.error(f"Error creating visualization: {e}")
-            # Create a simple error HTML if visualization fails
+          
             error_html = f"""
             <!DOCTYPE html>
             <html>
@@ -438,35 +438,35 @@ class DependencyVisualizer:
             # Create a copy of the graph for visualization
             viz_graph = self.graph.copy()
             
-            # Get node types for coloring
+          
             node_colors = []
             for node in viz_graph.nodes():
                 node_type = viz_graph.nodes[node].get('type')
                 if node_type == 'python_file':
-                    node_colors.append('#3572A5')  # Python blue
+                    node_colors.append('#3572A5')  
                 elif node_type == 'js_file':
-                    node_colors.append('#F7DF1E')  # JavaScript yellow
+                    node_colors.append('#F7DF1E') 
                 elif node_type == 'python_package':
-                    node_colors.append('#FFD43B')  # Python package color
+                    node_colors.append('#FFD43B')  
                 elif node_type == 'js_package':
-                    node_colors.append('#F0DB4F')  # JS package color
+                    node_colors.append('#F0DB4F')  
                 else:
-                    node_colors.append('#CCCCCC')  # Default gray
+                    node_colors.append('#CCCCCC')  
             
-            # Set up the matplotlib figure
+        
             plt.figure(figsize=(14, 10))
             plt.title(f"Dependency Graph: {self.repo_name}", fontsize=16)
             
-            # Use spring layout for graph positioning
+            
             if viz_graph.number_of_nodes() > 0:
                 try:
                     pos = nx.spring_layout(viz_graph, k=0.15, iterations=50)
                     
-                    # Draw the graph
+                    
                     nx.draw_networkx_nodes(viz_graph, pos, node_size=300, node_color=node_colors, alpha=0.8)
                     nx.draw_networkx_edges(viz_graph, pos, edge_color='#CCCCCC', arrows=True, alpha=0.5)
                     
-                    # Draw labels only for important nodes (high degree or packages)
+                   
                     labels = {}
                     for node in viz_graph.nodes():
                         if viz_graph.degree(node) > 3 or viz_graph.nodes[node].get('type') in ['python_package', 'js_package']:
@@ -474,7 +474,7 @@ class DependencyVisualizer:
                     
                     nx.draw_networkx_labels(viz_graph, pos, labels=labels, font_size=8)
                     
-                    # Add a legend
+                  
                     legend_elements = [
                         plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='#3572A5', markersize=10, label='Python File'),
                         plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='#F7DF1E', markersize=10, label='JavaScript File'),
@@ -483,7 +483,7 @@ class DependencyVisualizer:
                     ]
                     plt.legend(handles=legend_elements, loc='upper right')
                     
-                    # Add metadata text
+                   
                     plt.figtext(0.02, 0.02, f"Repository: {self.repo_name}\n"
                                f"Files: Python: {self.graph.graph.get('python_files', 0)}, "
                                f"JavaScript: {self.graph.graph.get('js_files', 0)}\n"
@@ -492,7 +492,7 @@ class DependencyVisualizer:
                                fontsize=10)
                 except Exception as layout_error:
                     logger.warning(f"Error in graph layout: {layout_error}. Using random layout instead.")
-                    # Fallback to random layout if spring layout fails
+                    
                     pos = nx.random_layout(viz_graph)
                     nx.draw_networkx(viz_graph, pos, node_color=node_colors, 
                                     edge_color='#CCCCCC', arrows=True, 
@@ -503,10 +503,10 @@ class DependencyVisualizer:
             else:
                 plt.text(0.5, 0.5, "No dependencies found", ha='center', va='center', fontsize=14)
             
-            # Remove axes
+            
             plt.axis('off')
             
-            # Save the figure
+            
             plt.savefig(output_path, dpi=150, bbox_inches='tight')
             plt.close()
             
@@ -515,7 +515,7 @@ class DependencyVisualizer:
             
         except Exception as e:
             logger.error(f"Error creating static visualization: {e}")
-            # Create a simple error image
+           
             try:
                 plt.figure(figsize=(8, 6))
                 plt.text(0.5, 0.5, f"Error creating visualization:\n{str(e)}", 
@@ -533,7 +533,7 @@ class DependencyVisualizer:
         try:
             logger.info("Exporting graph data to JSON...")
             
-            # Convert graph to a serializable format
+           
             data = {
                 "repo_name": self.repo_name,
                 "metadata": dict(self.graph.graph),
@@ -548,34 +548,34 @@ class DependencyVisualizer:
                 serializable_attrs = {}
                 for key, value in attrs.items():
                     try:
-                        # Test JSON serialization
+                      
                         json.dumps({key: value})
                         serializable_attrs[key] = value
                     except (TypeError, OverflowError):
-                        # Convert non-serializable types to strings
+                      
                         serializable_attrs[key] = str(value)
                 
                 node_data.update(serializable_attrs)
                 data["nodes"].append(node_data)
             
-            # Add edges
+            
             for source, target, attrs in self.graph.edges(data=True):
                 edge_data = {"source": source, "target": target}
-                # Ensure all attributes are JSON serializable
+                
                 serializable_attrs = {}
                 for key, value in attrs.items():
                     try:
-                        # Test JSON serialization
+                       
                         json.dumps({key: value})
                         serializable_attrs[key] = value
                     except (TypeError, OverflowError):
-                        # Convert non-serializable types to strings
+                        
                         serializable_attrs[key] = str(value)
                 
                 edge_data.update(serializable_attrs)
                 data["edges"].append(edge_data)
             
-            # Save to JSON
+            
             with open(output_path, 'w', encoding='utf-8') as f:
                 json.dump(data, f, indent=2)
             
@@ -596,12 +596,12 @@ class DependencyVisualizer:
         except PermissionError as e:
             logger.warning(f"Permission error when removing {directory}: {e}")
             try:
-                # Try using system commands as a fallback
+              
                 import os
                 import platform
                 import time
                 
-                # Give time for any file handles to be released
+                
                 time.sleep(1)
                 
                 if platform.system() == 'Windows':
@@ -611,7 +611,7 @@ class DependencyVisualizer:
                     logger.info("Using Unix command to force directory removal")
                     os.system(f'rm -rf "{directory}"')
                 
-                # Check if directory was removed
+                
                 if not os.path.exists(directory):
                     logger.info(f"Directory successfully removed using system command: {directory}")
                 else:

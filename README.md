@@ -38,7 +38,7 @@ The analyzer includes a powerful code search system that helps find relevant cod
 
 1. Build the code corpus:
 ```bash
-python build_corpus.py --source-dir /path/to/your/python/project --output ./code_corpus.txt --recursive
+python ./src/code_corpus.py --source-dir ./temp_repo --output ./code_corpus.txt --recursive
 ```
 
 2. Search for code:
@@ -86,10 +86,10 @@ This will:
 
 ```bash
 # Build a code corpus from your project
-python code_corpus.py --source-dir ./your_project --output ./code_corpus.txt --recursive
+python ./src/code_corpus.py --source-dir ./your_project --output ./code_corpus.txt --recursive
 
 # Search for similar code
-python code_search.py your_file.py --model-dir ./model --corpus ./code_corpus.txt
+python code_search.py dummy.py --query "Function to process image data" --model-dir ./code_transformer_exporttxt
 ```
 
 

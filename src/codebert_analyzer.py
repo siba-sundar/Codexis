@@ -23,7 +23,7 @@ class CodeBERTAnalyzer:
             self.model = RobertaForSequenceClassification.from_pretrained(model_name)
             self.model.to(self.device)
             
-            # For code summarization/understanding
+          
             self.nlp = pipeline('feature-extraction', model=model_name, tokenizer=model_name, device=0 if torch.cuda.is_available() else -1)
             
             logger.info("CodeBERT initialization complete")
@@ -34,14 +34,14 @@ class CodeBERTAnalyzer:
     def code_quality_score(self, code):
        
         try:
-            # Use the model to get code representation
+            
             inputs = self.tokenizer(code, return_tensors="pt", truncation=True, max_length=512).to(self.device)
             outputs = self.model(**inputs)
             
-            # Use the embedding as a feature vector
+           
             embeddings = outputs.logits
             
-            # Simple heuristic for code quality based on the embedding vector
+           
             quality_score = torch.sigmoid(torch.mean(embeddings)).item()
             
             return quality_score
@@ -53,20 +53,20 @@ class CodeBERTAnalyzer:
        
         suggestions = []
         
-        # Skip if the code is too long
+       
         if len(code) > 10000:
             suggestions.append("Code is too large for detailed analysis. Consider breaking it into smaller modules.")
             return suggestions
         
-        # Skip if the code is empty
+        
         if not code.strip():
             suggestions.append("Code file is empty or contains only whitespace.")
             return suggestions
         
         try:
-            # Basic code analysis based on patterns
             
-            # Check for long functions/methods
+            
+           
             lines = code.split('\n')
             function_start_patterns = {
                 '.py': ['def ', 'async def '],
@@ -82,36 +82,36 @@ class CodeBERTAnalyzer:
             for line in lines:
                 line = line.strip()
                 
-                # Check if line starts a function definition
+                
                 for pattern in function_start_patterns.get(file_ext, []):
                     if pattern in line:
                         in_function = True
                         current_function_lines = 0
                 
-                # Count lines in the function
+             
                 if in_function:
                     current_function_lines += 1
                 
-                # Check if line ends a function definition
+               
                 if in_function and ('}' in line or line.startswith('return')):
                     if current_function_lines > 50:
                         suggestions.append(f"Consider breaking down large function with {current_function_lines} lines into smaller, more focused functions.")
                     in_function = False
             
-            # Check for hardcoded values
+           
             if file_ext in ['.py', '.js', '.jsx', '.ts', '.tsx']:
                 string_literal_count = len([line for line in lines if '"' in line or "'" in line])
                 if string_literal_count > 10:
                     suggestions.append("Consider extracting hardcoded string literals into constants or configuration files.")
             
-            # Check for deep nesting
+            
             indentation_levels = []
             for line in lines:
-                if line.strip():  # Skip empty lines
+                if line.strip():  
                     leading_spaces = len(line) - len(line.lstrip())
                     indentation_levels.append(leading_spaces)
             
-            if indentation_levels and max(indentation_levels) > 24:  # Assuming 4 spaces per level, this is 6 levels
+            if indentation_levels and max(indentation_levels) > 24: 
                 suggestions.append("Deep nesting detected. Consider refactoring to reduce complexity and improve readability.")
             
             # Check for code duplication (simple approach)
@@ -135,7 +135,7 @@ class CodeBERTAnalyzer:
             elif quality_score < 0.6:
                 suggestions.append("Code quality is average. Consider adding more documentation and improving naming conventions.")
             
-            # Language-specific suggestions
+           
             if file_ext == '.py':
                 if 'import *' in code:
                     suggestions.append("Avoid using 'import *' as it can lead to namespace pollution. Import only what you need.")
@@ -175,7 +175,7 @@ class CodeBERTAnalyzer:
             '.tsx': 'React TypeScript'
         }
         
-        # Get all files that need analysis
+       
         files_to_analyze = []
         for node in graph.nodes():
             node_type = graph.nodes[node].get('type')
@@ -188,33 +188,33 @@ class CodeBERTAnalyzer:
         
         logger.info(f"Analyzing {len(files_to_analyze)} files with CodeBERT...")
         
-        # Track file complexity scores
+     
         complexity_scores = {}
         
-        # Analyze each file
+       
         for file_path, ext in tqdm(files_to_analyze, desc="Analyzing files"):
             try:
                 with open(file_path, 'r', encoding='utf-8', errors='ignore') as file:
                     code = file.read()
                 
-                # Skip empty files
+               
                 if not code.strip():
                     continue
                 
-                # Calculate code quality score
+               
                 quality_score = self.code_quality_score(code)
                 
-                # Get improvement suggestions
+                
                 suggestions = self.suggest_improvements(code, ext)
                 
-                # Store the complexity score
+               
                 complexity_scores[file_path] = 1.0 - quality_score  # Invert the quality score to get complexity
                 
-                # Calculate code metrics
+                
                 loc = len(code.split('\n'))
                 comment_lines = len([line for line in code.split('\n') if line.strip().startswith('#') or line.strip().startswith('//')])
                 
-                # Store the analysis results
+                
                 rel_path = os.path.relpath(file_path, repo_path)
                 results["file_analysis"][rel_path] = {
                     "quality_score": quality_score,
@@ -228,11 +228,11 @@ class CodeBERTAnalyzer:
             except Exception as e:
                 logger.error(f"Error analyzing file {file_path}: {e}")
         
-        # Get the most complex files
+       
         most_complex = sorted(complexity_scores.items(), key=lambda x: x[1], reverse=True)[:5]
         results["most_complex_files"] = [os.path.relpath(file_path, repo_path) for file_path, _ in most_complex]
         
-        # Generate overall suggestions
+        
         if results["file_analysis"]:
             avg_quality = sum(file["quality_score"] for file in results["file_analysis"].values()) / len(results["file_analysis"])
             avg_comment_ratio = sum(file["comment_ratio"] for file in results["file_analysis"].values()) / len(results["file_analysis"])
@@ -243,7 +243,7 @@ class CodeBERTAnalyzer:
             if avg_comment_ratio < 0.1:
                 results["overall_suggestions"].append("The codebase has a low comment ratio. Consider improving documentation to enhance maintainability.")
             
-            # Check for consistent code style
+           
             quality_variance = sum((file["quality_score"] - avg_quality) ** 2 for file in results["file_analysis"].values())
             if quality_variance > 0.05:
                 results["overall_suggestions"].append("Code quality varies significantly across files. Consider implementing coding standards and linters.")

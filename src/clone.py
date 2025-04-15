@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 def clone_repository(repo_url, target_dir="temp_repo"):
    
     try:
-        # Clean up existing directory if it exists
+        
         if os.path.exists(target_dir):
             logger.info(f"Removing existing directory: {target_dir}")
             shutil.rmtree(target_dir)
@@ -32,7 +32,7 @@ def list_files_by_extension(repo_dir, extensions):
     result = {ext: [] for ext in extensions}
     
     for root, _, files in os.walk(repo_dir):
-        # Skip hidden directories like .git
+       
         if any(part.startswith(".") for part in root.split(os.sep)):
             continue
             
