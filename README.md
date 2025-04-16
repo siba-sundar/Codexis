@@ -43,7 +43,7 @@ python ./src/code_corpus.py --source-dir ./temp_repo --output ./code_corpus.txt 
 
 2. Search for code:
 ```bash
-python code_search.py your_input_file.py --model-dir ./code_transformer_export --corpus ./code_corpus.txt
+python code_search.py  --query "Function to process image data" --model-dir ./model
 ```
 
 

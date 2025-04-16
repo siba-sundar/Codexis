@@ -41,7 +41,7 @@ def parse_args():
     parser.add_argument('--tmp-dir', '-t', default='temp_repo', help='Temporary directory for cloning the repository')
     parser.add_argument('--skip-codebert', action='store_true', help='Skip CodeBERT analysis (faster)')
     parser.add_argument('--skip-visualization', action='store_true', help='Skip visualization generation')
-    parser.add_argument('--verbose', '-v', action='store_true', help='Show verbose output')
+    # parser.add_argument('--verbose', '-v', action='store_true', help='Show verbose output')
     
     return parser.parse_args()
 
