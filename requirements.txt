@@ -11,3 +11,9 @@ astroid==2.15.6
 numpy>=2.0
 matplotlib>=3.8.0  # Latest version with NumPy 2.x support
 pybind11>=2.12
+GitPython
+esprima
+astroid
+torch
+transformers
+matplotlib
