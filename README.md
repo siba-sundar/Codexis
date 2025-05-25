@@ -16,6 +16,8 @@ A comprehensive tool for analyzing GitHub repositories, extracting dependencies,
 
 The analyzer includes a powerful code search system that helps find relevant code snippets using natural language queries.
 
+![Starting Image](./assets/Screenshot%20From%202025-05-25%2014-10-30.png)
+
 
 
 
@@ -45,6 +47,8 @@ python ./src/code_corpus.py --source-dir ./temp_repo --output ./code_corpus.txt 
 ```bash
 python code_search.py  --query "Function to process image data" --model-dir ./model
 ```
+
+![Center image](./assets/image.png)
 
 
 ## Installation
